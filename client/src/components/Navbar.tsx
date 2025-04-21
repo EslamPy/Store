@@ -30,7 +30,8 @@ const Navbar: React.FC = () => {
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
-    if (query.length > 2) {
+    
+    if (query.length > 1) {
       const results = searchProducts(query);
       setSearchResults(results);
       setShowResults(true);
@@ -40,7 +41,9 @@ const Navbar: React.FC = () => {
   };
 
   const handleSearchFocus = () => {
-    if (searchQuery.length > 2) {
+    if (searchQuery.length > 1) {
+      const results = searchProducts(searchQuery);
+      setSearchResults(results);
       setShowResults(true);
     }
   };
@@ -50,6 +53,17 @@ const Navbar: React.FC = () => {
     setTimeout(() => {
       setShowResults(false);
     }, 200);
+  };
+  
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      setShowResults(false);
+    }
+  };
+  
+  const handleSelectProduct = () => {
+    setShowResults(false);
   };
 
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
@@ -88,10 +102,17 @@ const Navbar: React.FC = () => {
                   onChange={handleSearchInput}
                   onFocus={handleSearchFocus}
                   onBlur={handleSearchBlur}
+                  onKeyDown={handleSearchKeyDown}
                 />
                 <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
               </div>
-              {showResults && <SearchResults results={searchResults} />}
+              {showResults && (
+                <SearchResults 
+                  results={searchResults} 
+                  searchQuery={searchQuery} 
+                  onSelectProduct={handleSelectProduct} 
+                />
+              )}
             </div>
             
             {/* Right Navigation Items */}
@@ -150,7 +171,13 @@ const Navbar: React.FC = () => {
             <Link href="/products?filter=deals" className={`text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2 ${location.includes('deals') ? 'text-[#0bff7e]' : ''}`}>Deals</Link>
             <Link href="#support" className="text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2">Support</Link>
           </div>
-          {showResults && <SearchResults results={searchResults} />}
+          {showResults && (
+            <SearchResults 
+              results={searchResults} 
+              searchQuery={searchQuery} 
+              onSelectProduct={handleSelectProduct} 
+            />
+          )}
         </div>
       </nav>
     </>
