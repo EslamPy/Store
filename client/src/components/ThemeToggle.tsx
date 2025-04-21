@@ -1,20 +1,26 @@
-
+import { useState, useEffect } from 'react';
 import { useTheme } from '../context/ThemeContext';
 
 const ThemeToggle: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+
+  // When mounted on client, now we can show the UI
+  useEffect(() => setMounted(true), []);
+
+  if (!mounted) return null;
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <button 
+      className="text-white hover:text-[#0bff7e] transition-colors" 
       onClick={toggleTheme}
-      className="text-gray-600 dark:text-gray-300 hover:text-[#0bff7e] transition-colors"
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
-      {theme === 'dark' ? (
-        <i className="fas fa-sun text-xl"></i>
-      ) : (
-        <i className="fas fa-moon text-xl"></i>
-      )}
+      <i className={`fas ${theme === 'dark' ? 'fa-moon' : 'fa-sun'} text-xl`}></i>
     </button>
   );
 };

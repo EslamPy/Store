@@ -1,43 +1,62 @@
+import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
-import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+type ThemeType = 'dark' | 'light';
 
 interface ThemeContextType {
-  theme: 'dark' | 'light';
-  toggleTheme: () => void;
+  theme: ThemeType;
+  setTheme: (theme: ThemeType) => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
+const defaultValue: ThemeContextType = {
   theme: 'dark',
-  toggleTheme: () => {},
-});
+  setTheme: () => {},
+};
 
-export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<'dark' | 'light'>(
-    () => (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
-  );
+export const ThemeContext = createContext<ThemeContextType>(defaultValue);
 
-  useEffect(() => {
-    const root = window.document.documentElement;
-    root.classList.remove('dark', 'light');
-    root.classList.add(theme);
-    localStorage.setItem('theme', theme);
-  }, [theme]);
+interface ThemeProviderProps {
+  children: ReactNode;
+}
 
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
+export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+  const [storedTheme, setStoredTheme] = useLocalStorage<ThemeType>('theme', 'dark');
+  const [theme, setTheme] = useState<ThemeType>(storedTheme);
+  
+  const handleSetTheme = (newTheme: ThemeType) => {
+    setTheme(newTheme);
   };
-
+  
+  useEffect(() => {
+    // Update localStorage when theme changes
+    setStoredTheme(theme);
+    
+    // Apply theme to the body
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.body.style.backgroundColor = '#121212';
+      document.body.style.color = '#f0f0f0';
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.style.backgroundColor = '#f8f9fa';
+      document.body.style.color = '#212529';
+    }
+  }, [theme, setStoredTheme]);
+  
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-export const useTheme = () => {
+// Custom hook to use the ThemeContext
+export const useTheme = (): ThemeContextType => {
   const context = useContext(ThemeContext);
+  
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
+  
   return context;
 };
