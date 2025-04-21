@@ -163,6 +163,7 @@ const Navbar: React.FC = () => {
                 onChange={handleSearchInput}
                 onFocus={handleSearchFocus}
                 onBlur={handleSearchBlur}
+                onKeyDown={handleSearchKeyDown}
               />
               <i className="fas fa-search absolute left-3 top-3 text-gray-400"></i>
             </div>

@@ -21,6 +21,8 @@ interface CartContextType {
   isQuickViewOpen: boolean;
   openQuickView: (product: Product) => void;
   closeQuickView: () => void;
+  cartNotification: { show: boolean; message: string; type: 'success' | 'error' | 'info' };
+  setCartNotification: (notification: { show: boolean; message: string; type: 'success' | 'error' | 'info' }) => void;
 }
 
 export const CartContext = createContext<CartContextType>({
