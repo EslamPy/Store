@@ -10,6 +10,7 @@ import logo from '@assets/logo.png';
 const Navbar: React.FC = () => {
   const [location] = useLocation();
   const { openCart, cartItems } = useCart();
+  const { wishlist } = useWishlist();
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
