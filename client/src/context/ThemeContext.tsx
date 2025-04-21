@@ -1,3 +1,4 @@
+
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
@@ -25,23 +26,20 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   
   const handleSetTheme = (newTheme: ThemeType) => {
     setTheme(newTheme);
+    setStoredTheme(newTheme);
   };
   
   useEffect(() => {
-    // Update localStorage when theme changes
-    setStoredTheme(theme);
-    
-    // Apply theme to the body
     if (theme === 'dark') {
       document.documentElement.classList.add('dark');
-      document.body.style.backgroundColor = '#121212';
-      document.body.style.color = '#f0f0f0';
+      document.documentElement.style.setProperty('--background-color', '#121212');
+      document.documentElement.style.setProperty('--text-color', '#f0f0f0');
     } else {
       document.documentElement.classList.remove('dark');
-      document.body.style.backgroundColor = '#f8f9fa';
-      document.body.style.color = '#212529';
+      document.documentElement.style.setProperty('--background-color', '#ffffff');
+      document.documentElement.style.setProperty('--text-color', '#000000');
     }
-  }, [theme, setStoredTheme]);
+  }, [theme]);
   
   return (
     <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
@@ -50,13 +48,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use the ThemeContext
-export const useTheme = (): ThemeContextType => {
+export const useTheme = () => {
   const context = useContext(ThemeContext);
-  
   if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
-  
   return context;
 };
