@@ -5,12 +5,14 @@ import ProductListingPage from "./pages/ProductListingPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
+import WishlistPage from "./pages/WishlistPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Cart from "./components/Cart";
 import QuickViewModal from "./components/QuickViewModal";
 import CartNotification from "./components/CartNotification";
+import WishlistNotification from "./components/WishlistNotification";
 import EasterEgg from "./components/EasterEgg";
 import { useCart } from "./hooks/useCart";
 
@@ -40,6 +42,7 @@ function App() {
           <Route path="/product/:id" component={ProductDetailsPage} />
           <Route path="/cart" component={CartPage} />
           <Route path="/checkout" component={CheckoutPage} />
+          <Route path="/wishlist" component={WishlistPage} />
           <Route path="/:rest*" component={NotFoundPage} />
         </Switch>
       </main>
@@ -47,6 +50,7 @@ function App() {
       <Cart />
       <QuickViewModal />
       <CartNotification />
+      <WishlistNotification />
       <EasterEgg />
     </div>
   );
