@@ -6,10 +6,7 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-const ThemeContext = createContext<ThemeContextType>({
-  theme: 'dark',
-  toggleTheme: () => {},
-});
+export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'dark' | 'light'>(
@@ -17,26 +14,23 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   );
 
   useEffect(() => {
-    document.documentElement.classList.remove('light', 'dark');
-    document.documentElement.classList.add(theme);
+    const root = window.document.documentElement;
+    root.classList.remove('dark', 'light');
+    root.classList.add(theme);
     localStorage.setItem('theme', theme);
-    
-    // Update CSS variables for light/dark mode
-    if (theme === 'light') {
-      document.documentElement.style.setProperty('--background', '255 255 255');
-      document.documentElement.style.setProperty('--foreground', '20 20 20');
-    } else {
-      document.documentElement.style.setProperty('--background', '18 18 18');
-      document.documentElement.style.setProperty('--foreground', '240 240 240');
-    }
   }, [theme]);
 
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
 
+  const value = {
+    theme,
+    toggleTheme
+  };
+
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+    <ThemeContext.Provider value={value}>
       {children}
     </ThemeContext.Provider>
   );

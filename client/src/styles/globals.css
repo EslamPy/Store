@@ -1,22 +1,9 @@
 /* Global styles */
 
 body {
+  background-color: #121212;
+  color: #f0f0f0;
   font-family: 'Space Grotesk', sans-serif;
-}
-
-:root {
-  --background: 18 18 18;
-  --foreground: 240 240 240;
-}
-
-.dark {
-  --background: 18 18 18;
-  --foreground: 240 240 240;
-}
-
-.light {
-  --background: 255 255 255;
-  --foreground: 20 20 20;
 }
 
 .font-orbitron {
