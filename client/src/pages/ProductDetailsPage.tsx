@@ -15,22 +15,26 @@ const ProductDetailsPage: React.FC = () => {
   const { addToCart } = useCart();
   
   useEffect(() => {
-    if (params && params.id) {
-      setLoading(true);
-      const productId = parseInt(params.id);
-      const fetchedProduct = getProductById(productId);
-      
-      if (fetchedProduct) {
-        setProduct(fetchedProduct);
-        document.title = `${fetchedProduct.name} - MedTech`;
+    const fetchProductData = () => {
+      if (params && params.id) {
+        setLoading(true);
+        const productId = parseInt(params.id);
+        const fetchedProduct = getProductById(productId);
         
-        // Get similar products
-        setSimilarProducts(getSimilarProducts(productId, fetchedProduct.category));
+        if (fetchedProduct) {
+          setProduct(fetchedProduct);
+          document.title = `${fetchedProduct.name} - MedTech`;
+          
+          // Get similar products
+          setSimilarProducts(getSimilarProducts(productId, fetchedProduct.category));
+        }
+        
+        setLoading(false);
       }
-      
-      setLoading(false);
-    }
-  }, [params]);
+    };
+    
+    fetchProductData();
+  }, [params?.id]); // Only depend on the ID parameter
   
   const handleAddToCart = () => {
     if (product) {
@@ -59,9 +63,9 @@ const ProductDetailsPage: React.FC = () => {
             <h2 className="text-2xl font-orbitron font-bold text-white mb-4">Product Not Found</h2>
             <p className="text-gray-400 mb-6">The product you're looking for doesn't exist or has been removed.</p>
             <Link href="/products">
-              <a className="px-6 py-3 bg-[#0bff7e] text-black font-bold rounded-md">
+              <div className="px-6 py-3 bg-[#0bff7e] text-black font-bold rounded-md cursor-pointer text-center">
                 Browse All Products
-              </a>
+              </div>
             </Link>
           </div>
         </div>
@@ -81,15 +85,15 @@ const ProductDetailsPage: React.FC = () => {
         {/* Breadcrumbs */}
         <div className="mb-6 flex items-center text-sm">
           <Link href="/">
-            <a className="text-gray-400 hover:text-white">Home</a>
+            <div className="text-gray-400 hover:text-white cursor-pointer">Home</div>
           </Link>
           <span className="mx-2 text-gray-500">/</span>
           <Link href="/products">
-            <a className="text-gray-400 hover:text-white">Products</a>
+            <div className="text-gray-400 hover:text-white cursor-pointer">Products</div>
           </Link>
           <span className="mx-2 text-gray-500">/</span>
           <Link href={`/products?category=${product.category.toLowerCase()}`}>
-            <a className="text-gray-400 hover:text-white">{product.category}</a>
+            <div className="text-gray-400 hover:text-white cursor-pointer">{product.category}</div>
           </Link>
           <span className="mx-2 text-gray-500">/</span>
           <span className="text-white">{product.name}</span>
