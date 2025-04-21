@@ -1,46 +1,46 @@
 
-import { useEffect } from 'react';
-import AOS from 'aos';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
 
-const Partners = () => {
+const partners = [
+  { id: 1, name: 'Intel', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Intel_logo_%282006%29.svg/200px-Intel_logo_%282006%29.svg.png' },
+  { id: 2, name: 'AMD', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/AMD_logo.svg/200px-AMD_logo.svg.png' },
+  { id: 3, name: 'NVIDIA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/200px-Nvidia_logo.svg.png' }
+];
+
+const Partners: React.FC = () => {
+  const sliderRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
-    AOS.refresh();
+    if (sliderRef.current) {
+      gsap.to(sliderRef.current.children, {
+        xPercent: -100 * (partners.length - 1),
+        ease: "none",
+        duration: 10,
+        repeat: -1,
+        yoyo: true
+      });
+    }
   }, []);
 
   return (
-    <section className="py-16 bg-[#121212]">
+    <section className="py-16 bg-background overflow-hidden">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-orbitron font-bold text-white mb-12 text-center">
+        <h2 className="text-4xl font-orbitron font-bold mb-12 text-center">
           Our Partners
         </h2>
-        <div className="flex flex-wrap justify-center items-center gap-8">
-          {partners.map((partner, index) => (
-            <div
-              key={index}
-              className="w-32 h-32 bg-[#1e1e1e] rounded-lg p-4 flex items-center justify-center transform hover:scale-110 transition-transform duration-300"
-              data-aos="fade-up"
-              data-aos-delay={index * 100}
-            >
-              <img
-                src={partner.logo}
-                alt={partner.name}
-                className="max-w-full max-h-full filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity duration-300"
-              />
-            </div>
-          ))}
+        <div className="relative w-full">
+          <div ref={sliderRef} className="flex items-center justify-center space-x-12">
+            {partners.map((partner) => (
+              <div key={partner.id} className="flex-shrink-0">
+                <img src={partner.logo} alt={partner.name} className="h-16 w-auto filter grayscale hover:grayscale-0 transition-all duration-300" />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 };
-
-const partners = [
-  { name: "NVIDIA", logo: "https://placehold.co/200" },
-  { name: "AMD", logo: "https://placehold.co/200" },
-  { name: "Intel", logo: "https://placehold.co/200" },
-  { name: "ASUS", logo: "https://placehold.co/200" },
-  { name: "MSI", logo: "https://placehold.co/200" },
-  { name: "Corsair", logo: "https://placehold.co/200" }
-];
 
 export default Partners;

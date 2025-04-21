@@ -1,94 +1,33 @@
 export interface Category {
-  id: number;
+  id: string;
   name: string;
-  description: string;
-  slug: string;
+  icon: string;
   image: string;
 }
 
-export const categories: Category[] = [
+export const categories = [
   {
-    id: 1,
+    id: 'processors',
+    name: 'Processors',
+    icon: 'microchip',
+    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=500&q=80'
+  },
+  {
+    id: 'laptops',
     name: 'Laptops',
-    description: 'High-performance laptops for every need',
-    slug: 'laptops',
-    image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=500&q=80' // Placeholder image
+    icon: 'laptop',
+    image: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?auto=format&fit=crop&w=500&q=80'
   },
   {
-    id: 2,
+    id: 'headphones',
     name: 'Headphones',
-    description: 'Premium audio experience',
-    slug: 'headphones',
-    image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=500&q=80' // Placeholder image
+    icon: 'headphones',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=500&q=80'
   },
   {
-    id: 3,
-    name: 'CPUs',
-    description: 'High-performance processors',
-    slug: 'cpus',
-    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 4,
-    name: 'GPUs',
-    description: 'Powerful graphics cards',
-    slug: 'gpus',
-    image: 'https://images.unsplash.com/photo-1591405351990-4726e331f141?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 5,
-    name: 'Memory',
-    description: 'High-speed RAM modules',
-    slug: 'memory',
-    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 6,
-    name: 'Storage',
-    description: 'SSDs & high-capacity drives',
-    slug: 'storage',
+    id: 'graphics-cards',
+    name: 'Graphics Cards',
+    icon: 'desktop',
     image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 7,
-    name: 'Motherboards',
-    description: 'Feature-rich foundations',
-    slug: 'motherboards',
-    image: 'https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 8,
-    name: 'Power Supplies',
-    description: 'Reliable power delivery',
-    slug: 'power-supplies',
-    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 9,
-    name: 'Cases',
-    description: 'Stylish PC enclosures',
-    slug: 'cases',
-    image: 'https://images.unsplash.com/photo-1562976540-1502c2145186?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 10,
-    name: 'Cooling',
-    description: 'Advanced thermal solutions',
-    slug: 'cooling',
-    image: 'https://images.unsplash.com/photo-1587202372775-e229f172b9d7?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 11,
-    name: 'Peripherals',
-    description: 'Keyboards, mice, and more',
-    slug: 'peripherals',
-    image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=500&q=80'
-  },
-  {
-    id: 12,
-    name: 'Monitors',
-    description: 'High-refresh displays',
-    slug: 'monitors',
-    image: 'https://images.unsplash.com/photo-1591488320449-011701bb6704?auto=format&fit=crop&w=500&q=80'
   }
 ];

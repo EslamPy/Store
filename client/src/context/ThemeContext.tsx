@@ -1,4 +1,3 @@
-
 import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
@@ -9,40 +8,27 @@ interface ThemeContextType {
   setTheme: (theme: ThemeType) => void;
 }
 
-const defaultValue: ThemeContextType = {
+const ThemeContext = createContext<ThemeContextType>({
   theme: 'dark',
   setTheme: () => {},
-};
+});
 
-export const ThemeContext = createContext<ThemeContextType>(defaultValue);
+export const ThemeProvider: React.FC<ReactNode> = ({ children }) => {
+  const [theme, setTheme] = useLocalStorage<ThemeType>('theme', 'dark');
 
-interface ThemeProviderProps {
-  children: ReactNode;
-}
-
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [storedTheme, setStoredTheme] = useLocalStorage<ThemeType>('theme', 'dark');
-  const [theme, setTheme] = useState<ThemeType>(storedTheme);
-  
-  const handleSetTheme = (newTheme: ThemeType) => {
-    setTheme(newTheme);
-    setStoredTheme(newTheme);
-  };
-  
   useEffect(() => {
+    const root = document.documentElement;
     if (theme === 'dark') {
-      document.documentElement.classList.add('dark');
-      document.documentElement.style.setProperty('--background-color', '#121212');
-      document.documentElement.style.setProperty('--text-color', '#f0f0f0');
+      root.classList.add('dark');
+      root.classList.remove('light');
     } else {
-      document.documentElement.classList.remove('dark');
-      document.documentElement.style.setProperty('--background-color', '#ffffff');
-      document.documentElement.style.setProperty('--text-color', '#000000');
+      root.classList.add('light');
+      root.classList.remove('dark');
     }
   }, [theme]);
-  
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );

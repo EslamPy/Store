@@ -2,41 +2,54 @@
 import { useEffect } from 'react';
 import { useLocation } from 'wouter';
 
+const policies = {
+  privacy: {
+    title: 'Privacy Policy',
+    content: `
+      <h1>Privacy Policy</h1>
+      <p>Last updated: March 15, 2024</p>
+      <h2>1. Information We Collect</h2>
+      <p>We collect information that you provide directly to us...</p>
+    `
+  },
+  terms: {
+    title: 'Terms of Service',
+    content: `
+      <h1>Terms of Service</h1>
+      <p>Last updated: March 15, 2024</p>
+      <h2>1. Acceptance of Terms</h2>
+      <p>By accessing and using this website, you accept and agree to be bound by the terms...</p>
+    `
+  },
+  shipping: {
+    title: 'Shipping Policy',
+    content: `
+      <h1>Shipping Policy</h1>
+      <p>Last updated: March 15, 2024</p>
+      <h2>1. Processing Time</h2>
+      <p>Orders are typically processed within 1-2 business days...</p>
+    `
+  }
+};
+
 const PolicyPage = () => {
   const [location] = useLocation();
-  const policy = policies[location.split('/')[1]];
+  const policyType = location.split('/')[2];
+  const policy = policies[policyType as keyof typeof policies];
 
   useEffect(() => {
     document.title = `${policy.title} - MedTech`;
-  }, [policy.title]);
+  }, [policy]);
 
   return (
-    <div className="py-16 bg-[#121212] min-h-screen">
+    <div className="min-h-screen bg-background py-16">
       <div className="container mx-auto px-4 max-w-4xl">
-        <h1 className="text-4xl font-orbitron font-bold text-white mb-8">{policy.title}</h1>
-        <div className="bg-[#1e1e1e] rounded-lg p-8">
-          <div className="prose prose-invert max-w-none">
-            {policy.content}
-          </div>
+        <div className="bg-card rounded-lg shadow-lg p-8">
+          <div dangerouslySetInnerHTML={{ __html: policy.content }} className="prose prose-invert max-w-none" />
         </div>
       </div>
     </div>
   );
-};
-
-const policies = {
-  'privacy-policy': {
-    title: 'Privacy Policy',
-    content: `Your privacy content here...`
-  },
-  'terms-of-service': {
-    title: 'Terms of Service',
-    content: `Your terms content here...`
-  },
-  'shipping-policy': {
-    title: 'Shipping Policy',
-    content: `Your shipping content here...`
-  }
 };
 
 export default PolicyPage;
