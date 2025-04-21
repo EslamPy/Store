@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import { useCart } from '../hooks/useCart';
+import { useWishlist } from '../hooks/useWishlist';
 import { Product } from '../data/products';
 import { gsap } from 'gsap';
 
@@ -11,6 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false }) => {
   const { addToCart, openQuickView } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -162,14 +164,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
           <div className="flex justify-between items-center">
             <span className="text-xl font-bold text-white">${product.price.toFixed(2)}</span>
             <button 
-              className="text-[#0bff7e] hover:text-white transition-colors"
+              className={`transition-colors ${isInWishlist(product.id) 
+                ? 'text-[#ff6b9d] hover:text-white' 
+                : 'text-gray-400 hover:text-[#ff6b9d]'}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                // Toggle wishlist functionality would go here
+                if (isInWishlist(product.id)) {
+                  removeFromWishlist(product.id);
+                } else {
+                  addToWishlist(product);
+                  
+                  // Create heart animation effect
+                  const heartIcon = e.currentTarget.querySelector('i');
+                  if (heartIcon) {
+                    gsap.fromTo(
+                      heartIcon, 
+                      { scale: 1 },
+                      { scale: 1.5, duration: 0.2, yoyo: true, repeat: 1, ease: "elastic.out(1, 0.3)" }
+                    );
+                  }
+                }
               }}
             >
-              <i className="fas fa-heart"></i>
+              <i className={`${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart`}></i>
             </button>
           </div>
         </div>
