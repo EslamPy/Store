@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect, ReactNode } from 'react';
+import { createContext, useState, useEffect, ReactNode, useContext } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
 type ThemeType = 'dark' | 'light';
@@ -8,10 +8,12 @@ interface ThemeContextType {
   setTheme: (theme: ThemeType) => void;
 }
 
-export const ThemeContext = createContext<ThemeContextType>({
+const defaultValue: ThemeContextType = {
   theme: 'dark',
   setTheme: () => {},
-});
+};
+
+export const ThemeContext = createContext<ThemeContextType>(defaultValue);
 
 interface ThemeProviderProps {
   children: ReactNode;
@@ -20,6 +22,10 @@ interface ThemeProviderProps {
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   const [storedTheme, setStoredTheme] = useLocalStorage<ThemeType>('theme', 'dark');
   const [theme, setTheme] = useState<ThemeType>(storedTheme);
+  
+  const handleSetTheme = (newTheme: ThemeType) => {
+    setTheme(newTheme);
+  };
   
   useEffect(() => {
     // Update localStorage when theme changes
@@ -38,17 +44,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   }, [theme, setStoredTheme]);
   
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, setTheme: handleSetTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
 // Custom hook to use the ThemeContext
-export const useTheme = () => {
-  const context = createContext(ThemeContext);
+export const useTheme = (): ThemeContextType => {
+  const context = useContext(ThemeContext);
   
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
   

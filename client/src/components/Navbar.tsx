@@ -4,6 +4,7 @@ import ThemeToggle from './ThemeToggle';
 import { useCart } from '../hooks/useCart';
 import SearchResults from './SearchResults';
 import { searchProducts } from '../data/products';
+import logo from '@assets/logo.png';
 
 const Navbar: React.FC = () => {
   const [location] = useLocation();
@@ -61,8 +62,11 @@ const Navbar: React.FC = () => {
         <div className="container mx-auto px-4 py-3">
           <div className="flex items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center space-x-2">
-              <img src="/attached_assets/logo.png" alt="MedTech Logo" className="h-10" />
+            <Link href="/">
+              <div className="flex items-center space-x-2 cursor-pointer">
+                <img src={logo} alt="MedTech Logo" className="h-10" />
+                <span className="text-white text-xl font-orbitron font-bold">MedTech</span>
+              </div>
             </Link>
             
             {/* Desktop Navigation */}
