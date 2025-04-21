@@ -10,6 +10,7 @@ import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Cart from "./components/Cart";
 import QuickViewModal from "./components/QuickViewModal";
+import CartNotification from "./components/CartNotification";
 import EasterEgg from "./components/EasterEgg";
 import { useCart } from "./hooks/useCart";
 
@@ -45,6 +46,7 @@ function App() {
       <Footer />
       <Cart />
       <QuickViewModal />
+      <CartNotification />
       <EasterEgg />
     </div>
   );

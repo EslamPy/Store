@@ -39,6 +39,8 @@ export const CartContext = createContext<CartContextType>({
   isQuickViewOpen: false,
   openQuickView: () => {},
   closeQuickView: () => {},
+  cartNotification: { show: false, message: '', type: 'info' },
+  setCartNotification: () => {},
 });
 
 interface CartProviderProps {
@@ -51,6 +53,15 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isQuickViewOpen, setIsQuickViewOpen] = useState(false);
+  const [cartNotification, setCartNotification] = useState<{ 
+    show: boolean; 
+    message: string; 
+    type: 'success' | 'error' | 'info' 
+  }>({ 
+    show: false, 
+    message: '', 
+    type: 'info' 
+  });
   
   // Update localStorage when cartItems change
   useEffect(() => {
@@ -64,6 +75,17 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       
       if (existingItem) {
         // Update quantity if product exists
+        setCartNotification({
+          show: true,
+          message: `Updated ${product.name} quantity in your cart`,
+          type: 'success'
+        });
+        
+        // Auto-hide notification after 3 seconds
+        setTimeout(() => {
+          setCartNotification(prev => ({ ...prev, show: false }));
+        }, 3000);
+        
         return prevItems.map(item => 
           item.product.id === product.id 
             ? { ...item, quantity: item.quantity + quantity } 
@@ -71,16 +93,67 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         );
       } else {
         // Add new item if product doesn't exist
+        setCartNotification({
+          show: true,
+          message: `Added ${product.name} to your cart`,
+          type: 'success'
+        });
+        
+        // Auto-hide notification after 3 seconds
+        setTimeout(() => {
+          setCartNotification(prev => ({ ...prev, show: false }));
+        }, 3000);
+        
         return [...prevItems, { product, quantity }];
       }
     });
   };
   
   const removeFromCart = (productId: number) => {
+    // Find the product name before removing it
+    const productToRemove = cartItems.find(item => item.product.id === productId);
+    
+    if (productToRemove) {
+      setCartNotification({
+        show: true,
+        message: `Removed ${productToRemove.product.name} from your cart`,
+        type: 'info'
+      });
+      
+      // Auto-hide notification after 3 seconds
+      setTimeout(() => {
+        setCartNotification(prev => ({ ...prev, show: false }));
+      }, 3000);
+    }
+    
     setCartItems(prevItems => prevItems.filter(item => item.product.id !== productId));
   };
   
   const updateQuantity = (productId: number, quantity: number) => {
+    // Find the product before updating
+    const productToUpdate = cartItems.find(item => item.product.id === productId);
+    
+    if (productToUpdate) {
+      if (quantity > productToUpdate.quantity) {
+        setCartNotification({
+          show: true,
+          message: `Increased ${productToUpdate.product.name} quantity to ${quantity}`,
+          type: 'success'
+        });
+      } else if (quantity < productToUpdate.quantity) {
+        setCartNotification({
+          show: true,
+          message: `Decreased ${productToUpdate.product.name} quantity to ${quantity}`,
+          type: 'info'
+        });
+      }
+      
+      // Auto-hide notification after 3 seconds
+      setTimeout(() => {
+        setCartNotification(prev => ({ ...prev, show: false }));
+      }, 3000);
+    }
+    
     setCartItems(prevItems => 
       prevItems.map(item => 
         item.product.id === productId 
@@ -91,7 +164,20 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   };
   
   const clearCart = () => {
-    setCartItems([]);
+    if (cartItems.length > 0) {
+      setCartNotification({
+        show: true,
+        message: 'Your cart has been cleared',
+        type: 'info'
+      });
+      
+      // Auto-hide notification after 3 seconds
+      setTimeout(() => {
+        setCartNotification(prev => ({ ...prev, show: false }));
+      }, 3000);
+      
+      setCartItems([]);
+    }
   };
   
   const getCartTotal = () => {
@@ -133,6 +219,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       isQuickViewOpen,
       openQuickView,
       closeQuickView,
+      cartNotification,
+      setCartNotification,
     }}>
       {children}
     </CartContext.Provider>
