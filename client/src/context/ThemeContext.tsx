@@ -6,7 +6,10 @@ interface ThemeContextType {
   toggleTheme: () => void;
 }
 
-export const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+const ThemeContext = createContext<ThemeContextType>({
+  theme: 'dark',
+  toggleTheme: () => {},
+});
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<'dark' | 'light'>(
@@ -24,13 +27,8 @@ export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setTheme(prevTheme => prevTheme === 'dark' ? 'light' : 'dark');
   };
 
-  const value = {
-    theme,
-    toggleTheme
-  };
-
   return (
-    <ThemeContext.Provider value={value}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
