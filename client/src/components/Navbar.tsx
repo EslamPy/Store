@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
 import ThemeToggle from './ThemeToggle';
 import { useCart } from '../hooks/useCart';
+import { useWishlist } from '../hooks/useWishlist';
 import SearchResults from './SearchResults';
 import { searchProducts } from '../data/products';
 import logo from '@assets/logo.png';

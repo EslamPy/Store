@@ -2,8 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 import "./styles/globals.css";
-import AOS from 'aos';
-import 'aos/dist/aos.css';
+import AOSInitializer from "./components/AOSInitializer";
 import { ThemeProvider } from "./context/ThemeContext";
 import { CartProvider } from "./context/CartContext";
 import { WishlistProvider } from "./context/WishlistContext";
@@ -12,14 +11,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 
-// Initialize AOS
-document.addEventListener('DOMContentLoaded', () => {
-  AOS.init({
-    duration: 800,
-    once: true,
-    offset: 100
-  });
-});
+// The AOSInitializer component will handle AOS initialization
 
 createRoot(document.getElementById("root")!).render(
   <QueryClientProvider client={queryClient}>
@@ -27,6 +19,7 @@ createRoot(document.getElementById("root")!).render(
       <CartProvider>
         <WishlistProvider>
           <TooltipProvider>
+            <AOSInitializer />
             <App />
             <Toaster />
           </TooltipProvider>
