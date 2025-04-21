@@ -1,0 +1,106 @@
+🎯 MedTech – PC Parts Store (Frontend-Only AI Project)
+Type: Frontend Only (HTML, CSS, JavaScript, or React)
+Theme: Futuristic, techy, dark-mode with glowing animations
+Language: English only
+Goal: Build a stunning, interactive PC parts e-commerce website with advanced animations and AI-generated content
+
+🗂️ Pages Overview
+
+Page	Description
+Home Page	Hero section, featured products, limited-time offers, brand partners
+Product Listing	Grid layout of all products with filters and sorting
+Product Details	Gallery, specifications, comments, ratings, and sharing options
+Cart Page	Add/remove/update items with total cost
+Search Results	Instant results based on search keywords
+Checkout (UI only)	Mock checkout interface with form
+404 Page	Futuristic, animated error page
+🔥 Key Features
+🧭 Navbar
+Logo
+
+Search bar with auto-complete
+
+Shopping cart icon with badge counter
+
+Dark/Light toggle button
+
+Smooth sticky navigation
+
+🧱 Product Card Features
+Hover animation (zoom, blur, or glow)
+
+Add to cart button
+
+Rating stars
+
+“Quick View” modal on hover
+
+Wishlist (optional)
+
+📦 Product Details Page
+Multiple images with thumbnail carousel
+
+Full specifications (RAM, speed, power, etc.)
+
+Add to Cart + Buy Now buttons
+
+Share product (copy link, social media icons)
+
+User reviews (dummy data)
+
+Add a comment form
+
+“Related Products” section slider
+
+🛒 Cart Page
+Dynamic product list with quantities
+
+Price calculation
+
+Remove/Undo buttons
+
+Checkout button (dummy)
+
+🕒 Limited Offers Section
+Countdown timer
+
+Animated flashing “LIMITED” badge
+
+Before & after price
+
+Add-to-cart directly from this section
+
+🎨 Design & Aesthetic
+🔥 Theme
+Dark mode first
+
+Tech style, neon glow accents (green, blue, or purple)
+
+Cyberpunk vibes (optional)
+
+🖼 Fonts & Icons
+Fonts: Orbitron, Poppins, Space Grotesk
+
+Icons: Phosphor Icons / FontAwesome / Tabler Icons
+
+🎬 Animations
+AOS.js – Scroll animations
+
+GSAP – Complex hover effects
+
+Framer Motion (if using React)
+
+Button ripple effects
+
+Smooth page transitions
+
+🤖 AI Tools & Prompts
+🎨 AI Design Prompt (Figma / Uizard / Framer):
+“Design a modern dark-themed e-commerce UI for PC parts like CPUs and GPUs with neon glow, floating 3D elements, animated product cards, and a cyberpunk tech style. Include search bar, shopping cart, product grid, and a featured limited-time offers section.”
+
+🧑‍💻 AI Code Prompt:
+“Generate a responsive HTML/CSS layout for an e-commerce product grid with hover zoom effect, star ratings, and add-to-cart buttons. Include a dark theme with neon green highlights.”
+
+🖼️ AI Image Prompt (for Midjourney / Leonardo / Firefly):
+“A futuristic PC setup with glowing RGB components, hovering GPUs and CPUs, set in a sci-fi tech environment, dark background, cinematic lighting.”
+
