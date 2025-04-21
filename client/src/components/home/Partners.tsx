@@ -1,39 +1,51 @@
 
 import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-
-const partners = [
-  { id: 1, name: 'Intel', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Intel_logo_%282006%29.svg/200px-Intel_logo_%282006%29.svg.png' },
-  { id: 2, name: 'AMD', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/AMD_logo.svg/200px-AMD_logo.svg.png' },
-  { id: 3, name: 'NVIDIA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/200px-Nvidia_logo.svg.png' }
-];
+import { gsap } from 'gsap';
 
 const Partners: React.FC = () => {
   const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (sliderRef.current) {
-      gsap.to(sliderRef.current.children, {
-        xPercent: -100 * (partners.length - 1),
-        ease: "none",
-        duration: 10,
+      gsap.to('.partner-logo', {
+        xPercent: -100,
+        ease: 'none',
+        duration: 20,
         repeat: -1,
-        yoyo: true
       });
     }
   }, []);
 
+  const partners = [
+    { name: 'NVIDIA', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Nvidia_logo.svg/1200px-Nvidia_logo.svg.png' },
+    { name: 'Intel', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Intel_logo_%282006%29.svg/1200px-Intel_logo_%282006%29.svg.png' },
+    { name: 'AMD', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/AMD_Logo.svg/1200px-AMD_Logo.svg.png' },
+    { name: 'ASUS', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/ASUS_Logo.svg/1200px-ASUS_Logo.svg.png' },
+    { name: 'MSI', logo: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/MSI_logo.svg/1200px-MSI_logo.svg.png' },
+  ];
+
   return (
-    <section className="py-16 bg-background overflow-hidden">
+    <section className="partners-section py-16 bg-[#1a1a1a]">
       <div className="container mx-auto px-4">
-        <h2 className="text-4xl font-orbitron font-bold mb-12 text-center">
-          Our Partners
+        <h2 className="text-3xl font-orbitron font-bold text-white mb-12 text-center">
+          Our Trusted <span className="text-[#0bff7e]">Partners</span>
         </h2>
-        <div className="relative w-full">
-          <div ref={sliderRef} className="flex items-center justify-center space-x-12">
-            {partners.map((partner) => (
-              <div key={partner.id} className="flex-shrink-0">
-                <img src={partner.logo} alt={partner.name} className="h-16 w-auto filter grayscale hover:grayscale-0 transition-all duration-300" />
+        
+        <div 
+          ref={sliderRef}
+          className="overflow-hidden whitespace-nowrap"
+        >
+          <div className="inline-flex">
+            {[...partners, ...partners].map((partner, index) => (
+              <div
+                key={index}
+                className="partner-logo mx-12 inline-block opacity-60 hover:opacity-100 transition-opacity duration-300"
+              >
+                <img
+                  src={partner.logo}
+                  alt={partner.name}
+                  className="h-16 w-auto filter invert"
+                />
               </div>
             ))}
           </div>
