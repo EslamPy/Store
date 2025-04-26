@@ -136,11 +136,6 @@ const Navbar: React.FC = () => {
                 <i className="fas fa-user text-xl"></i>
               </button>
               
-              {/* Currency Selector */}
-              <div className="hidden sm:block">
-                <CurrencySelector />
-              </div>
-              
               {/* Wishlist */}
               <div className="wishlist-icon-wrapper">
                 <button 
@@ -154,6 +149,11 @@ const Navbar: React.FC = () => {
                     {wishlistCount}
                   </div>
                 )}
+              </div>
+              
+              {/* Currency Selector */}
+              <div className="hidden sm:block">
+                <CurrencySelector />
               </div>
               
               {/* Cart */}
