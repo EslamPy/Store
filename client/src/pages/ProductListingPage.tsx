@@ -1,5 +1,5 @@
 import { useLocation } from 'wouter';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import ProductCard from '../components/ProductCard';
 import { filterProducts, FilterOptions } from '../data/products';
 import { useProducts } from '../context/ProductContext';
@@ -11,12 +11,20 @@ const ProductListingPage: React.FC = () => {
   const { products } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
   const [minPrice, setMinPrice] = useState<number>(0);
   const [maxPrice, setMaxPrice] = useState<number>(5000);
   const [sortOption, setSortOption] = useState<string>('featured');
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [displayCount, setDisplayCount] = useState<number>(12);
   const [loading, setLoading] = useState(true);
+  
+  // Get all available brands from products
+  const availableBrands = useMemo(() => {
+    const brandsSet = new Set<string>();
+    products.forEach(product => brandsSet.add(product.brand));
+    return Array.from(brandsSet).sort();
+  }, [products]);
   
   // Extract search param from URL if present
   useEffect(() => {
@@ -38,6 +46,7 @@ const ProductListingPage: React.FC = () => {
   const applyFilters = () => {
     const options: FilterOptions = {
       category: selectedCategory || undefined,
+      brand: selectedBrand || undefined,
       priceRange: [minPrice, maxPrice],
       sortBy: sortOption,
       searchTerm: searchTerm
@@ -50,7 +59,7 @@ const ProductListingPage: React.FC = () => {
   // Effect to reapply filters when any filter option changes
   useEffect(() => {
     applyFilters();
-  }, [selectedCategory, minPrice, maxPrice, sortOption, searchTerm, products]);
+  }, [selectedCategory, selectedBrand, minPrice, maxPrice, sortOption, searchTerm, products]);
   
   useEffect(() => {
     document.title = 'Products - MedTech';
@@ -61,6 +70,7 @@ const ProductListingPage: React.FC = () => {
     const categoryParam = params.get('category');
     const filterParam = params.get('filter');
     const searchParam = params.get('search');
+    const brandParam = params.get('brand');
     
     // Set initial filters based on URL params
     if (categoryParam) {
@@ -69,6 +79,10 @@ const ProductListingPage: React.FC = () => {
     
     if (searchParam) {
       setSearchTerm(searchParam);
+    }
+    
+    if (brandParam) {
+      setSelectedBrand(brandParam);
     }
     
     // Special filter (deals, new, etc.)
@@ -85,6 +99,7 @@ const ProductListingPage: React.FC = () => {
   
   const clearFilters = () => {
     setSelectedCategory(null);
+    setSelectedBrand(null);
     setMinPrice(0);
     setMaxPrice(5000);
     setSortOption('featured');
@@ -100,10 +115,11 @@ const ProductListingPage: React.FC = () => {
               `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)}` : 
               'All Products'
             }
+            {selectedBrand && ` - ${selectedBrand}`}
           </h1>
           <p className="text-gray-400">
             {filteredProducts.length} products found
-            {(selectedCategory || searchTerm || sortOption !== 'featured' || (minPrice > 0 || maxPrice < 5000)) && 
+            {(selectedCategory || selectedBrand || searchTerm || sortOption !== 'featured' || (minPrice > 0 || maxPrice < 5000)) && 
               <button 
                 className="ml-2 text-[#00b3ff] hover:underline"
                 onClick={clearFilters}
@@ -156,7 +172,7 @@ const ProductListingPage: React.FC = () => {
               </div>
             </div>
             
-            <div className="bg-[#1e1e1e] rounded-lg p-6">
+            <div className="bg-[#1e1e1e] rounded-lg p-6 mb-6">
               <h2 className="text-xl font-orbitron font-bold text-white mb-4">Sort By</h2>
               <div className="space-y-2">
                 <div 
@@ -191,6 +207,32 @@ const ProductListingPage: React.FC = () => {
                 </div>
               </div>
             </div>
+            
+            {/* Brand Filter */}
+            <div className="bg-[#1e1e1e] rounded-lg p-6">
+              <h2 className="text-xl font-orbitron font-bold text-white mb-4">Brands</h2>
+              <div className="space-y-2 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                <div 
+                  className={`cursor-pointer ${selectedBrand === null ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSelectedBrand(null)}
+                >
+                  All Brands
+                </div>
+                
+                {availableBrands.map(brand => (
+                  <div 
+                    key={brand}
+                    className={`cursor-pointer ${selectedBrand === brand ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e] flex items-center`}
+                    onClick={() => setSelectedBrand(brand)}
+                  >
+                    <span className={`w-4 h-4 inline-block mr-2 border rounded-sm ${selectedBrand === brand ? 'bg-[#0bff7e] border-[#0bff7e]' : 'border-gray-500'}`}>
+                      {selectedBrand === brand && <i className="fas fa-check text-xs text-black flex justify-center items-center h-full"></i>}
+                    </span>
+                    {brand}
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
           
           {/* Product Grid */}
@@ -221,6 +263,26 @@ const ProductListingPage: React.FC = () => {
           </div>
         </div>
       </div>
+      
+      {/* Add custom scrollbar styling */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-track {
+            background: #2d2d2d;
+            border-radius: 10px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #4d4d4d;
+            border-radius: 10px;
+          }
+          .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #5d5d5d;
+          }
+        `
+      }} />
     </div>
   );
 };

@@ -4,6 +4,7 @@ export interface Product {
   description: string;
   fullDescription?: string;
   category: string;
+  brand: string;
   price: number;
   originalPrice?: number;
   rating: number;
@@ -28,6 +29,7 @@ const products: Product[] = [
     description: 'Unleash gaming potential with DLSS 3.0, RT cores, and overclocked performance.',
     fullDescription: 'The RTX 4080 Super takes gaming to another level with its cutting-edge performance capabilities. Featuring advanced ray tracing cores, DLSS 3.0 AI upscaling, and 16GB of ultra-fast GDDR6X memory, this GPU delivers breathtaking visuals and frame rates in even the most demanding games. The redesigned cooling system ensures optimal performance under load while maintaining whisper-quiet operation.',
     category: 'GPUs',
+    brand: 'NVIDIA',
     price: 899.99,
     originalPrice: 1199.99,
     rating: 4.8,
@@ -61,6 +63,7 @@ const products: Product[] = [
     description: '16-core powerhouse for extreme multitasking and content creation.',
     fullDescription: 'The AMD Ryzen 9 7950X is the flagship processor in the Ryzen 7000 series, built on the advanced 5nm Zen 4 architecture. With 16 cores and 32 threads, this CPU delivers unmatched performance for content creators, gamers, and professional workloads. Featuring a base clock of 4.5 GHz and boost up to 5.7 GHz, along with 80MB of combined cache, the 7950X offers exceptional single and multi-threaded performance while maintaining impressive power efficiency.',
     category: 'CPUs',
+    brand: 'AMD',
     price: 549.99,
     originalPrice: 699.99,
     rating: 5.0,
@@ -93,6 +96,7 @@ const products: Product[] = [
     description: 'Lightning-fast NVMe SSD with up to 7,450 MB/s read speeds for instant loading.',
     fullDescription: 'The Samsung 990 PRO is a high-performance PCIe 4.0 NVMe SSD designed for gamers, content creators, and professionals who demand the fastest storage. With sequential read speeds up to 7,450 MB/s and write speeds up to 6,900 MB/s, this drive dramatically reduces loading times and file transfer waits. The drive features Samsung\'s proprietary controller and V-NAND technology, along with a nickel-coated controller to manage heat and maintain optimal performance during intense workloads.',
     category: 'Storage',
+    brand: 'Samsung',
     price: 219.99,
     originalPrice: 279.99,
     rating: 5.0,
@@ -120,6 +124,7 @@ const products: Product[] = [
     description: 'High-performance DDR5 memory with dynamic RGB lighting and overclocking support.',
     fullDescription: 'Corsair Vengeance RGB DDR5 memory delivers the next generation of memory performance with faster speeds, greater capacities, and lower latencies than previous generations. Each module features a custom performance PCB for superior signal quality and ten-zone RGB lighting that can be synchronized with other Corsair RGB products through iCUE software. With tight timings and XMP 3.0 support, this kit is optimized for Intel and AMD platforms, ensuring compatibility and reliable performance.',
     category: 'Memory',
+    brand: 'Corsair',
     price: 129.99,
     originalPrice: 159.99,
     rating: 4.7,
@@ -148,6 +153,7 @@ const products: Product[] = [
     description: 'Premium ATX motherboard with robust power delivery and extensive connectivity.',
     fullDescription: 'The ASUS ROG Strix Z790-E Gaming motherboard combines cutting-edge performance with sleek aesthetics for a premium building experience. Featuring a robust 18+1 power stage design, PCIe 5.0, DDR5 support, and advanced cooling solutions, this motherboard is designed for enthusiasts and overclockers. The extensive connectivity includes WiFi 6E, 10Gb Ethernet, multiple USB ports including front USB 3.2 Gen 2x2 Type-C, and onboard RGB that can be synchronized through ASUS Aura Sync.',
     category: 'Motherboards',
+    brand: 'ASUS',
     price: 399.99,
     rating: 4.8,
     reviews: 67,
@@ -175,6 +181,7 @@ const products: Product[] = [
     description: 'RGB all-in-one liquid CPU cooler for maximum thermal performance.',
     fullDescription: 'The Cooler Master MasterLiquid ML360 RGB is a high-performance all-in-one liquid CPU cooler featuring a 360mm radiator and three RGB fans for maximum cooling capacity. Its dual chamber pump design separates hot and cold coolant to improve performance, while the low-profile CPU block ensures compatibility with most cases. The included RGB controller allows for customization even without RGB motherboard headers, making this cooler both powerful and visually stunning.',
     category: 'Cooling',
+    brand: 'Cooler Master',
     price: 149.99,
     rating: 4.6,
     reviews: 38,
@@ -201,6 +208,7 @@ const products: Product[] = [
     description: 'Fully modular 80+ Gold power supply with silent operation.',
     fullDescription: 'The EVGA SuperNOVA 1000 G6 delivers clean, stable power with 80 PLUS Gold efficiency, reducing heat generation and saving on energy costs. Its fully modular design allows for connecting only the cables you need, improving airflow and reducing clutter inside your case. The 135mm fluid dynamic bearing fan operates in a silent mode at low to medium loads, spinning up only when needed. With Japanese capacitors rated at 105°C and comprehensive protection features, this PSU is designed for reliable operation even in demanding systems.',
     category: 'Power Supplies',
+    brand: 'EVGA',
     price: 189.99,
     originalPrice: 219.99,
     rating: 4.9,
@@ -228,6 +236,7 @@ const products: Product[] = [
     description: 'Premium dual-chamber case with stunning glass panels and versatile cooling options.',
     fullDescription: 'The Lian Li O11 Dynamic EVO builds upon the acclaimed O11 Dynamic with even more flexibility and innovative features. This case features a dual-chamber design that separates the power supply and drives from the main components, improving airflow and aesthetics. With support for multiple radiator configurations, vertical GPU mounting, and a modular front panel that can be inverted, the O11 Dynamic EVO adapts to your build requirements. The tempered glass panels on the front and side showcase your components while the solid rear chamber keeps cables neatly hidden.',
     category: 'Cases',
+    brand: 'Lian Li',
     price: 169.99,
     rating: 4.8,
     reviews: 92,
@@ -254,6 +263,7 @@ const products: Product[] = [
     description: 'Massive curved gaming monitor with 240Hz refresh rate and 1ms response time.',
     fullDescription: 'The Samsung Odyssey G9 delivers an immersive gaming experience with its massive 49-inch 1000R curved display, equivalent to two 27-inch 16:9 monitors side by side. Featuring a QLED panel with HDR1000 certification, 240Hz refresh rate, and 1ms response time, this monitor is built for competitive gaming without compromising on image quality. G-Sync and FreeSync Premium Pro support ensure tear-free gameplay, while the dramatic 1000R curvature matches the human eye\'s field of view for reduced eye strain and increased immersion.',
     category: 'Monitors',
+    brand: 'Samsung',
     price: 1299.99,
     originalPrice: 1499.99,
     rating: 4.7,
@@ -283,6 +293,7 @@ const products: Product[] = [
     description: 'Flagship Intel processor with 24 cores and 32 threads for ultimate performance.',
     fullDescription: 'The Intel Core i9-14900K represents the pinnacle of Intel\'s 14th generation desktop processors. Featuring a hybrid architecture with 8 Performance cores and 16 Efficient cores for a total of 24 cores and 32 threads, this CPU excels in both gaming and productivity workloads. With boost clocks up to 6.0 GHz, support for DDR5-5600 memory, and PCIe 5.0, the i9-14900K delivers exceptional performance for demanding users. The unlocked multiplier allows for overclocking, while the integrated Intel UHD Graphics 770 provides basic display capabilities without a discrete GPU.',
     category: 'CPUs',
+    brand: 'Intel',
     price: 569.99,
     rating: 4.9,
     reviews: 36,
@@ -310,6 +321,7 @@ const products: Product[] = [
     description: 'Ultra-lightweight wireless gaming mouse with pro-grade precision and 70-hour battery life.',
     fullDescription: 'The Logitech G Pro X Superlight is designed for esports professionals, weighing less than 63 grams without compromising on performance or durability. Featuring Logitech\'s HERO 25K sensor for pixel-perfect accuracy up to 25,600 DPI, and LIGHTSPEED wireless technology for a 1ms response rate, this mouse delivers competitive-grade performance without the cable drag. The refined, minimalist design removes unnecessary components while maintaining the award-winning PRO shape that\'s trusted by pro gamers worldwide. With up to 70 hours of battery life, zero-additive PTFE feet for smooth gliding, and five programmable buttons, this is the ultimate competitive gaming mouse.',
     category: 'Peripherals',
+    brand: 'Logitech',
     price: 149.99,
     rating: 4.8,
     reviews: 127,
@@ -336,6 +348,7 @@ const products: Product[] = [
     description: 'High-performance PCIe 4.0 NVMe SSD optimized for gaming with up to 7,300 MB/s speeds.',
     fullDescription: 'The WD Black SN850X is designed specifically for gamers and creative professionals who demand the fastest storage solutions. With sequential read speeds up to 7,300 MB/s and write speeds up to 6,600 MB/s, this drive dramatically reduces load times and file transfers. The SN850X features a proprietary WD_BLACK G2 controller and nCache 4.0 technology that optimizes random read performance for gaming scenarios. Game Mode 2.0 predictively loads game assets, further reducing stutter and lag. With a compact M.2 2280 form factor and PCIe Gen4 interface, this SSD delivers next-gen performance for your gaming rig or workstation.',
     category: 'Storage',
+    brand: 'WD',
     price: 129.99,
     originalPrice: 159.99,
     rating: 4.9,
@@ -426,6 +439,7 @@ export const searchProducts = (query: string) => {
 
 interface FilterOptions {
   category?: string;
+  brand?: string;
   priceRange?: [number, number];
   sortBy?: string;
   searchTerm?: string;
@@ -438,6 +452,13 @@ export const filterProducts = (productsToFilter: Product[], options: FilterOptio
   if (options.category) {
     filtered = filtered.filter(product => 
       product.category.toLowerCase() === options.category?.toLowerCase()
+    );
+  }
+  
+  // Filter by brand
+  if (options.brand) {
+    filtered = filtered.filter(product => 
+      product.brand.toLowerCase() === options.brand?.toLowerCase()
     );
   }
   
