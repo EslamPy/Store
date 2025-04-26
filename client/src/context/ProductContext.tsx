@@ -17,7 +17,26 @@ export const ProductProvider: React.FC<{ children: ReactNode }> = ({ children })
     // Load products from localStorage or fallback to initial data
     const storedProducts = localStorage.getItem('products');
     if (storedProducts) {
-      setProducts(JSON.parse(storedProducts));
+      try {
+        const parsedProducts = JSON.parse(storedProducts);
+        
+        // Check if products have the brand property
+        const hasBrands = parsedProducts.every((product: any) => 'brand' in product);
+        
+        if (hasBrands) {
+          setProducts(parsedProducts);
+        } else {
+          console.warn('Products in localStorage missing brand property. Resetting to initial data.');
+          const initialProducts = getAllProducts();
+          setProducts(initialProducts);
+          localStorage.setItem('products', JSON.stringify(initialProducts));
+        }
+      } catch (error) {
+        console.error('Error parsing products from localStorage:', error);
+        const initialProducts = getAllProducts();
+        setProducts(initialProducts);
+        localStorage.setItem('products', JSON.stringify(initialProducts));
+      }
     } else {
       const initialProducts = getAllProducts();
       setProducts(initialProducts);

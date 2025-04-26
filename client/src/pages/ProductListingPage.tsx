@@ -21,9 +21,16 @@ const ProductListingPage: React.FC = () => {
   
   // Get all available brands from products
   const availableBrands = useMemo(() => {
+    console.log('Products in availableBrands:', products.length, products);
     const brandsSet = new Set<string>();
-    products.forEach(product => brandsSet.add(product.brand));
-    return Array.from(brandsSet).sort();
+    products.forEach(product => {
+      if (product.brand) {
+        brandsSet.add(product.brand);
+      }
+    });
+    const sortedBrands = Array.from(brandsSet).sort();
+    console.log('Available brands:', sortedBrands);
+    return sortedBrands;
   }, [products]);
   
   // Extract search param from URL if present
@@ -106,6 +113,12 @@ const ProductListingPage: React.FC = () => {
     setSearchTerm('');
   };
   
+  // For debugging - reset localStorage
+  const resetProductData = () => {
+    localStorage.removeItem('products');
+    window.location.reload();
+  };
+  
   return (
     <div className="py-16 bg-[#121212]">
       <div className="container mx-auto px-4">
@@ -117,17 +130,27 @@ const ProductListingPage: React.FC = () => {
             }
             {selectedBrand && ` - ${selectedBrand}`}
           </h1>
-          <p className="text-gray-400">
-            {filteredProducts.length} products found
-            {(selectedCategory || selectedBrand || searchTerm || sortOption !== 'featured' || (minPrice > 0 || maxPrice < 5000)) && 
-              <button 
-                className="ml-2 text-[#00b3ff] hover:underline"
-                onClick={clearFilters}
-              >
-                Clear filters
-              </button>
-            }
-          </p>
+          <div className="flex justify-between items-center">
+            <p className="text-gray-400">
+              {filteredProducts.length} products found
+              {(selectedCategory || selectedBrand || searchTerm || sortOption !== 'featured' || (minPrice > 0 || maxPrice < 5000)) && 
+                <button 
+                  className="ml-2 text-[#00b3ff] hover:underline"
+                  onClick={clearFilters}
+                >
+                  Clear filters
+                </button>
+              }
+            </p>
+            
+            {/* Temporary debug button */}
+            <button 
+              className="text-xs text-gray-500 hover:text-[#00b3ff]"
+              onClick={resetProductData}
+            >
+              Reset Product Data
+            </button>
+          </div>
         </div>
         
         <div className="flex flex-col lg:flex-row gap-8">
