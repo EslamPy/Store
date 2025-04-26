@@ -8,7 +8,7 @@ import { categories } from '../data/categories';
 
 const ProductListingPage: React.FC = () => {
   const [location] = useLocation();
-  const { products } = useProducts();
+  const { products, resetProducts } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedBrand, setSelectedBrand] = useState<string | null>(null);
@@ -28,8 +28,32 @@ const ProductListingPage: React.FC = () => {
         brandsSet.add(product.brand);
       }
     });
-    const sortedBrands = Array.from(brandsSet).sort();
+    
+    let sortedBrands = Array.from(brandsSet).sort();
     console.log('Available brands:', sortedBrands);
+    
+    // If no brands were found, use default brands
+    if (sortedBrands.length === 0) {
+      sortedBrands = [
+        'NVIDIA', 
+        'AMD', 
+        'Intel', 
+        'Samsung', 
+        'ASUS', 
+        'Corsair', 
+        'EVGA', 
+        'Cooler Master', 
+        'Logitech', 
+        'Dell', 
+        'HP', 
+        'Lenovo', 
+        'Techno Zone', 
+        'Acer',
+        'WD'
+      ].sort();
+      console.log('Using default brands instead:', sortedBrands);
+    }
+    
     return sortedBrands;
   }, [products]);
   
@@ -113,10 +137,15 @@ const ProductListingPage: React.FC = () => {
     setSearchTerm('');
   };
   
-  // For debugging - reset localStorage
+  // Reset product data with enhanced functionality
   const resetProductData = () => {
-    localStorage.removeItem('products');
-    window.location.reload();
+    resetProducts();
+    setSelectedBrand(null);
+    setSelectedCategory(null);
+    setMinPrice(0);
+    setMaxPrice(5000);
+    setSortOption('featured');
+    setSearchTerm('');
   };
   
   return (
@@ -143,12 +172,13 @@ const ProductListingPage: React.FC = () => {
               }
             </p>
             
-            {/* Temporary debug button */}
+            {/* Reset Brands button */}
             <button 
-              className="text-xs text-gray-500 hover:text-[#00b3ff]"
+              className="px-3 py-1 text-sm bg-[#2a2a2a] hover:bg-[#3a3a3a] text-gray-300 hover:text-white rounded-md transition-colors"
               onClick={resetProductData}
             >
-              Reset Product Data
+              <i className="fas fa-sync-alt mr-2"></i>
+              Refresh Brands
             </button>
           </div>
         </div>
