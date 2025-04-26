@@ -440,6 +440,7 @@ export const searchProducts = (query: string) => {
 interface FilterOptions {
   category?: string;
   brand?: string;
+  brands?: string[];
   priceRange?: [number, number];
   sortBy?: string;
   searchTerm?: string;
@@ -455,8 +456,14 @@ export const filterProducts = (productsToFilter: Product[], options: FilterOptio
     );
   }
   
-  // Filter by brand
-  if (options.brand) {
+  // Filter by brands (multiple)
+  if (options.brands && options.brands.length > 0) {
+    filtered = filtered.filter(product => 
+      options.brands?.includes(product.brand)
+    );
+  }
+  // For backward compatibility
+  else if (options.brand) {
     filtered = filtered.filter(product => 
       product.brand.toLowerCase() === options.brand?.toLowerCase()
     );
