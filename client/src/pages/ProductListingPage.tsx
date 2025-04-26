@@ -1,20 +1,56 @@
-import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
+import { useEffect, useState } from 'react';
 import ProductCard from '../components/ProductCard';
-import { getAllProducts, filterProducts } from '../data/products';
+import { filterProducts, FilterOptions } from '../data/products';
+import { useProducts } from '../context/ProductContext';
+import { getAllProducts } from '../data/products';
 import { categories } from '../data/categories';
 
 const ProductListingPage: React.FC = () => {
   const [location] = useLocation();
-  const [products, setProducts] = useState<any[]>([]);
+  const { products } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [minPrice, setMinPrice] = useState<number>(0);
+  const [maxPrice, setMaxPrice] = useState<number>(5000);
+  const [sortOption, setSortOption] = useState<string>('featured');
+  const [searchTerm, setSearchTerm] = useState<string>('');
+  const [displayCount, setDisplayCount] = useState<number>(12);
   const [loading, setLoading] = useState(true);
   
-  // Filter values
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000]);
-  const [sortBy, setSortBy] = useState<string>('featured');
-  const [searchTerm, setSearchTerm] = useState<string>('');
+  // Extract search param from URL if present
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.split('?')[1]);
+    const searchQuery = searchParams.get('search');
+    if (searchQuery) {
+      setSearchTerm(searchQuery);
+    }
+    
+    const filterParam = searchParams.get('filter');
+    if (filterParam === 'deals') {
+      // Special case for "Deals" filter
+      setFilteredProducts(products.filter(p => p.discount && p.discount > 0));
+    } else {
+      applyFilters();
+    }
+  }, [location, products]);
+  
+  const applyFilters = () => {
+    const options: FilterOptions = {
+      category: selectedCategory || undefined,
+      priceRange: [minPrice, maxPrice],
+      sortBy: sortOption,
+      searchTerm: searchTerm
+    };
+    
+    const filtered = filterProducts(products, options);
+    setFilteredProducts(filtered);
+  };
+  
+  // Effect to reapply filters when any filter option changes
+  useEffect(() => {
+    applyFilters();
+  }, [selectedCategory, minPrice, maxPrice, sortOption, searchTerm, products]);
   
   useEffect(() => {
     document.title = 'Products - MedTech';
@@ -37,33 +73,21 @@ const ProductListingPage: React.FC = () => {
     
     // Special filter (deals, new, etc.)
     if (filterParam) {
-      setSortBy(filterParam);
+      setSortOption(filterParam);
     }
     
     // Get all products and apply filters
     const allProducts = getAllProducts();
-    setProducts(allProducts);
+    setFilteredProducts(allProducts);
     
     setLoading(false);
   }, [location]);
   
-  // Apply filters when filters change
-  useEffect(() => {
-    if (products.length > 0) {
-      const filtered = filterProducts(products, {
-        category: selectedCategory,
-        priceRange,
-        sortBy,
-        searchTerm
-      });
-      setFilteredProducts(filtered);
-    }
-  }, [products, selectedCategory, priceRange, sortBy, searchTerm]);
-  
   const clearFilters = () => {
-    setSelectedCategory('');
-    setPriceRange([0, 2000]);
-    setSortBy('featured');
+    setSelectedCategory(null);
+    setMinPrice(0);
+    setMaxPrice(5000);
+    setSortOption('featured');
     setSearchTerm('');
   };
   
@@ -79,7 +103,7 @@ const ProductListingPage: React.FC = () => {
           </h1>
           <p className="text-gray-400">
             {filteredProducts.length} products found
-            {(selectedCategory || searchTerm || sortBy !== 'featured' || (priceRange[0] > 0 || priceRange[1] < 2000)) && 
+            {(selectedCategory || searchTerm || sortOption !== 'featured' || (minPrice > 0 || maxPrice < 5000)) && 
               <button 
                 className="ml-2 text-[#00b3ff] hover:underline"
                 onClick={clearFilters}
@@ -97,8 +121,8 @@ const ProductListingPage: React.FC = () => {
               <h2 className="text-xl font-orbitron font-bold text-white mb-4">Categories</h2>
               <div className="space-y-2">
                 <div 
-                  className={`cursor-pointer ${selectedCategory === '' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSelectedCategory('')}
+                  className={`cursor-pointer ${selectedCategory === null ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSelectedCategory(null)}
                 >
                   All Categories
                 </div>
@@ -120,14 +144,14 @@ const ProductListingPage: React.FC = () => {
                 <input 
                   type="range" 
                   min="0" 
-                  max="2000" 
-                  value={priceRange[1]} 
-                  onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value)])}
+                  max="5000" 
+                  value={maxPrice} 
+                  onChange={(e) => setMaxPrice(parseInt(e.target.value))}
                   className="w-full"
                 />
                 <div className="flex justify-between text-sm text-gray-400 mt-2">
-                  <span>${priceRange[0]}</span>
-                  <span>${priceRange[1]}</span>
+                  <span>${minPrice}</span>
+                  <span>${maxPrice}</span>
                 </div>
               </div>
             </div>
@@ -136,32 +160,32 @@ const ProductListingPage: React.FC = () => {
               <h2 className="text-xl font-orbitron font-bold text-white mb-4">Sort By</h2>
               <div className="space-y-2">
                 <div 
-                  className={`cursor-pointer ${sortBy === 'featured' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSortBy('featured')}
+                  className={`cursor-pointer ${sortOption === 'featured' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSortOption('featured')}
                 >
                   Featured
                 </div>
                 <div 
-                  className={`cursor-pointer ${sortBy === 'price-low' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSortBy('price-low')}
+                  className={`cursor-pointer ${sortOption === 'price-low' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSortOption('price-low')}
                 >
                   Price: Low to High
                 </div>
                 <div 
-                  className={`cursor-pointer ${sortBy === 'price-high' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSortBy('price-high')}
+                  className={`cursor-pointer ${sortOption === 'price-high' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSortOption('price-high')}
                 >
                   Price: High to Low
                 </div>
                 <div 
-                  className={`cursor-pointer ${sortBy === 'rating' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSortBy('rating')}
+                  className={`cursor-pointer ${sortOption === 'rating' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSortOption('rating')}
                 >
                   Highest Rated
                 </div>
                 <div 
-                  className={`cursor-pointer ${sortBy === 'deals' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
-                  onClick={() => setSortBy('deals')}
+                  className={`cursor-pointer ${sortOption === 'deals' ? 'text-[#0bff7e]' : 'text-white'} hover:text-[#0bff7e]`}
+                  onClick={() => setSortOption('deals')}
                 >
                   Deals & Offers
                 </div>

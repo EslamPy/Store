@@ -1,11 +1,14 @@
 import { useState, useEffect, useRef } from 'react';
+import { Link } from 'wouter';
 import { getDiscountedProducts } from '../../data/products';
 import { useCart } from '../../hooks/useCart';
+import { useWishlist } from '../../hooks/useWishlist';
 
 const LimitedOfferSection: React.FC = () => {
   const [limitedOffers, setLimitedOffers] = useState<any[]>([]);
   const [countdown, setCountdown] = useState({ hours: 23, minutes: 59, seconds: 59 });
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist, removeFromWishlist } = useWishlist();
   const swiperRef = useRef<any>(null);
   
   useEffect(() => {
@@ -38,6 +41,14 @@ const LimitedOfferSection: React.FC = () => {
     
     return () => clearInterval(interval);
   }, []);
+
+  const handleAddToWishlist = (product: any) => {
+    if (isInWishlist(product.id)) {
+      removeFromWishlist(product.id);
+    } else {
+      addToWishlist(product);
+    }
+  };
   
   const formatTime = (time: number) => time.toString().padStart(2, '0');
   
@@ -68,15 +79,19 @@ const LimitedOfferSection: React.FC = () => {
                 <div className="p-6">
                   <div className="flex flex-col md:flex-row gap-6">
                     <div className="w-full md:w-2/5 relative group aspect-square">
-                      <img 
-                        src={product.image}
-                        alt={product.name} 
-                        className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-                      />
+                      <Link href={`/product/${product.id}`}>
+                        <img 
+                          src={product.image}
+                          alt={product.name} 
+                          className="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110 cursor-pointer"
+                        />
+                      </Link>
                     </div>
                     
                     <div className="w-full md:w-3/5">
-                      <h3 className="text-2xl font-orbitron font-bold text-white mb-2">{product.name}</h3>
+                      <Link href={`/product/${product.id}`}>
+                        <h3 className="text-2xl font-orbitron font-bold text-white mb-2 cursor-pointer hover:text-[#0bff7e] transition-colors">{product.name}</h3>
+                      </Link>
                       <div className="flex items-center mb-3">
                         <div className="text-yellow-400 flex">
                           {[...Array(5)].map((_, i) => (
@@ -113,8 +128,15 @@ const LimitedOfferSection: React.FC = () => {
                           <i className="fas fa-shopping-cart"></i>
                           <span>Add to Cart</span>
                         </button>
-                        <button className="btn-hover-effect p-3 border border-[#00b3ff] text-white rounded-md hover:bg-[#00b3ff] hover:text-black transition-colors">
-                          <i className="fas fa-heart"></i>
+                        <button 
+                          className={`btn-hover-effect p-3 border text-white rounded-md hover:bg-[#ff6b9d] hover:border-[#ff6b9d] hover:text-black transition-colors ${
+                            isInWishlist(product.id) 
+                              ? 'border-[#ff6b9d] bg-[#ff6b9d] text-black' 
+                              : 'border-[#00b3ff]'
+                          }`}
+                          onClick={() => handleAddToWishlist(product)}
+                        >
+                          <i className={`${isInWishlist(product.id) ? 'fas' : 'far'} fa-heart`}></i>
                         </button>
                       </div>
                     </div>

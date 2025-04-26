@@ -360,32 +360,65 @@ const products: Product[] = [
   }
 ];
 
-// Helper functions
-export const getAllProducts = () => products;
+// Export functions to get products from localStorage or fallback to initial data
+export const getProductsFromStorage = (): Product[] => {
+  const storedProducts = localStorage.getItem('products');
+  if (storedProducts) {
+    return JSON.parse(storedProducts);
+  } else {
+    // Initial load - no need to set localStorage here as that's handled by ProductContext
+    return products;
+  }
+};
 
-export const getProductById = (id: number) => products.find(product => product.id === id);
+export const getAllProducts = () => {
+  // When called from ProductContext initial load, return the hardcoded data
+  // When called elsewhere, use the localStorage data
+  if (typeof window !== 'undefined') {
+    return getProductsFromStorage();
+  }
+  return products;
+};
 
-export const getFeaturedProducts = () => products.filter(product => product.featured);
+export const getProductById = (id: number) => {
+  const allProducts = getProductsFromStorage();
+  return allProducts.find(product => product.id === id);
+};
 
-export const getDiscountedProducts = () => products.filter(product => product.discount && product.discount > 0).sort((a, b) => (b.discount || 0) - (a.discount || 0));
+export const getFeaturedProducts = () => {
+  const allProducts = getProductsFromStorage();
+  return allProducts.filter(product => product.featured);
+};
 
-export const getNewProducts = () => products.filter(product => product.new);
+export const getDiscountedProducts = () => {
+  const allProducts = getProductsFromStorage();
+  return allProducts
+    .filter(product => product.discount && product.discount > 0)
+    .sort((a, b) => (b.discount || 0) - (a.discount || 0));
+};
+
+export const getNewProducts = () => {
+  const allProducts = getProductsFromStorage();
+  return allProducts.filter(product => product.new);
+};
 
 export const getProductsByCategory = (category: string) => {
-  return products.filter(product => product.category.toLowerCase() === category.toLowerCase());
+  const allProducts = getProductsFromStorage();
+  return allProducts.filter(product => product.category.toLowerCase() === category.toLowerCase());
 };
 
 export const getSimilarProducts = (id: number, category: string, limit = 4) => {
-  return products
+  const allProducts = getProductsFromStorage();
+  return allProducts
     .filter(product => product.id !== id && product.category === category)
-    .sort(() => 0.5 - Math.random())
     .slice(0, limit);
 };
 
 export const searchProducts = (query: string) => {
+  const allProducts = getProductsFromStorage();
   const lowerCaseQuery = query.toLowerCase();
-  return products.filter(product => 
-    product.name.toLowerCase().includes(lowerCaseQuery) || 
+  return allProducts.filter(product =>
+    product.name.toLowerCase().includes(lowerCaseQuery) ||
     product.description.toLowerCase().includes(lowerCaseQuery) ||
     product.category.toLowerCase().includes(lowerCaseQuery)
   );

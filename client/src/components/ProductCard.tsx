@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { Link } from 'wouter';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
+import { useCurrency } from '../context/CurrencyContext';
 import { Product } from '../data/products';
 import { gsap } from 'gsap';
 
@@ -13,6 +14,7 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false }) => {
   const { addToCart, openQuickView } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { convertPrice, formatPrice } = useCurrency();
   const cardRef = useRef<HTMLDivElement>(null);
   
   useEffect(() => {
@@ -162,7 +164,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
           </div>
           <h3 className="text-lg font-orbitron font-bold text-white mb-2">{product.name}</h3>
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-white">${product.price.toFixed(2)}</span>
+            <span className="text-xl font-bold text-white">{formatPrice(convertPrice(product.price))}</span>
             <button 
               className={`transition-colors ${isInWishlist(product.id) 
                 ? 'text-[#ff6b9d] hover:text-white' 

@@ -1,4 +1,3 @@
-
 import { useTheme } from '../context/ThemeContext';
 
 const ThemeToggle: React.FC = () => {
@@ -7,7 +6,7 @@ const ThemeToggle: React.FC = () => {
   return (
     <button 
       onClick={toggleTheme}
-      className="text-gray-600 dark:text-gray-300 hover:text-[#0bff7e] transition-colors"
+      className="text-white dark:text-white light:text-black hover:text-[#0bff7e] transition-colors"
       aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
     >
       {theme === 'dark' ? (

@@ -1,14 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'wouter';
 import ProductCard from '../ProductCard';
-import { getFeaturedProducts } from '../../data/products';
+import { useProducts } from '../../context/ProductContext';
 
 const FeaturedProducts: React.FC = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const { products } = useProducts();
+  const [visibleProducts, setVisibleProducts] = useState<number>(4);
   
-  useEffect(() => {
-    setProducts(getFeaturedProducts());
-  }, []);
+  const featuredProducts = products.filter(product => product.featured).slice(0, visibleProducts);
   
   return (
     <section className="py-16 bg-[#121212]" data-aos="fade-up">
@@ -21,7 +20,7 @@ const FeaturedProducts: React.FC = () => {
         </div>
         
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {products.map((product, index) => (
+          {featuredProducts.map((product, index) => (
             <ProductCard 
               key={product.id} 
               product={product} 

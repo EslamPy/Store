@@ -3,8 +3,12 @@ import HeroSection from '../components/home/HeroSection';
 import CategorySection from '../components/home/CategorySection';
 import LimitedOfferSection from '../components/home/LimitedOfferSection';
 import FeaturedProducts from '../components/home/FeaturedProducts';
+import TechUpdates from '../components/home/TechUpdates';
+import Reviews from '../components/home/Reviews';
+import Partners from '../components/home/Partners';
 import TechSpecs from '../components/home/TechSpecs';
 import Newsletter from '../components/home/Newsletter';
+import ContactForm from '../components/home/ContactForm';
 
 const HomePage: React.FC = () => {
   useEffect(() => {
@@ -22,8 +26,12 @@ const HomePage: React.FC = () => {
       <CategorySection />
       <LimitedOfferSection />
       <FeaturedProducts />
+      <TechUpdates />
+      <Reviews />
+      <Partners />
       <TechSpecs />
       <Newsletter />
+      <ContactForm />
     </>
   );
 };

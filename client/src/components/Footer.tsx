@@ -6,7 +6,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <img src="/attached_assets/logo.png" alt="MedTech Logo" className="h-10 mb-6" />
+            <img src="../src/assets/logo.png" alt="MedTech Logo" className="h-10 mb-6" />
             <p className="text-gray-400 mb-6">
               Premium PC components for gamers, creators, and tech enthusiasts.
             </p>
@@ -61,7 +61,7 @@ const Footer: React.FC = () => {
               </li>
               <li className="flex items-center">
                 <i className="fas fa-envelope text-[#0bff7e] mr-3"></i>
-                <span className="text-gray-400">support@medtech.com</span>
+                <span className="text-gray-400">eslamdev@outlook.de</span>
               </li>
             </ul>
           </div>
@@ -72,9 +72,9 @@ const Footer: React.FC = () => {
             &copy; {new Date().getFullYear()} MedTech. All rights reserved.
           </p>
           <div className="flex space-x-6">
-            <a href="#" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Privacy Policy</a>
-            <a href="#" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Terms of Service</a>
-            <a href="#" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Shipping Policy</a>
+            <Link href="/policy/privacy-policy" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Privacy Policy</Link>
+            <Link href="/policy/terms-of-service" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Terms of Service</Link>
+            <Link href="/policy/shipping-policy" className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">Shipping Policy</Link>
           </div>
         </div>
       </div>

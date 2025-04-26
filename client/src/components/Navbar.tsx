@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'wouter';
-import ThemeToggle from './ThemeToggle';
 import { useCart } from '../hooks/useCart';
 import { useWishlist } from '../hooks/useWishlist';
 import SearchResults from './SearchResults';
 import { searchProducts } from '../data/products';
-import logo from '@assets/logo.png';
+import CurrencySelector from './ui/CurrencySelector';
 
 const Navbar: React.FC = () => {
-  const [location] = useLocation();
+  const [location, setLocation] = useLocation();
   const { openCart, cartItems } = useCart();
   const { wishlist } = useWishlist();
   const [isScrolled, setIsScrolled] = useState(false);
@@ -59,7 +58,7 @@ const Navbar: React.FC = () => {
   
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && searchQuery.trim()) {
-      window.location.href = `/products?search=${encodeURIComponent(searchQuery)}`;
+      setLocation(`/products?search=${encodeURIComponent(searchQuery)}`);
       setShowResults(false);
     }
   };
@@ -68,7 +67,20 @@ const Navbar: React.FC = () => {
     setShowResults(false);
   };
 
+  const navigateToLogin = () => {
+    setLocation('/login');
+  };
+
+  const navigateToCart = () => {
+    setLocation('/cart');
+  };
+  
+  const navigateToWishlist = () => {
+    setLocation('/wishlist');
+  };
+
   const cartItemCount = cartItems.reduce((total, item) => total + item.quantity, 0);
+  const wishlistCount = wishlist.length;
 
   return (
     <>
@@ -80,7 +92,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <Link href="/">
               <div className="flex items-center space-x-2 cursor-pointer">
-                <img src={logo} alt="MedTech Logo" className="h-10" />
+                <img src="../src/assets/logo.png" alt="MedTech Logo" className="h-10" />
                 <span className="text-white text-xl font-orbitron font-bold">MedTech</span>
               </div>
             </Link>
@@ -119,19 +131,36 @@ const Navbar: React.FC = () => {
             
             {/* Right Navigation Items */}
             <div className="flex items-center space-x-6">
-              {/* Theme Toggle */}
-              <ThemeToggle />
-              
               {/* Account */}
-              <a href="#" className="text-white hover:text-[#0bff7e] transition-colors">
+              <button onClick={navigateToLogin} className="text-white hover:text-[#0bff7e] transition-colors">
                 <i className="fas fa-user text-xl"></i>
-              </a>
+              </button>
+              
+              {/* Currency Selector */}
+              <div className="hidden sm:block">
+                <CurrencySelector />
+              </div>
+              
+              {/* Wishlist */}
+              <div className="wishlist-icon-wrapper">
+                <button 
+                  className="text-white hover:text-[#0bff7e] transition-colors" 
+                  onClick={navigateToWishlist}
+                >
+                  <i className="fas fa-heart text-xl"></i>
+                </button>
+                {wishlistCount > 0 && (
+                  <div className="wishlist-badge bg-[#ff6b9d] text-xs text-black font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                    {wishlistCount}
+                  </div>
+                )}
+              </div>
               
               {/* Cart */}
               <div className="cart-icon-wrapper">
                 <button 
                   className="text-white hover:text-[#0bff7e] transition-colors" 
-                  onClick={openCart}
+                  onClick={navigateToCart}
                 >
                   <i className="fas fa-shopping-cart text-xl"></i>
                 </button>
@@ -173,6 +202,12 @@ const Navbar: React.FC = () => {
             <Link href="/products" className={`text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2 ${location === '/products' ? 'text-[#0bff7e]' : ''}`}>Products</Link>
             <Link href="/products?filter=deals" className={`text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2 ${location.includes('deals') ? 'text-[#0bff7e]' : ''}`}>Deals</Link>
             <Link href="#support" className="text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2">Support</Link>
+            <Link href="/wishlist" className="text-white font-orbitron hover:text-[#0bff7e] transition-colors py-2">Wishlist</Link>
+            
+            {/* Mobile Currency Selector */}
+            <div className="py-2">
+              <CurrencySelector />
+            </div>
           </div>
           {showResults && (
             <SearchResults 
@@ -183,6 +218,22 @@ const Navbar: React.FC = () => {
           )}
         </div>
       </nav>
+      
+      {/* Add CSS for the wishlist badge */}
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        .wishlist-icon-wrapper,
+        .cart-icon-wrapper {
+          position: relative;
+        }
+        
+        .wishlist-badge,
+        .cart-badge {
+          position: absolute;
+          top: -8px;
+          right: -10px;
+        }
+      `}} />
     </>
   );
 };

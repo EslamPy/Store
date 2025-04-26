@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useRoute, Link } from 'wouter';
 import { useCart } from '../hooks/useCart';
+import { useCurrency } from '../context/CurrencyContext';
 import { getProductById, getSimilarProducts } from '../data/products';
 import ProductCard from '../components/ProductCard';
 
@@ -13,6 +14,7 @@ const ProductDetailsPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState('description');
   const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
+  const { convertPrice, formatPrice } = useCurrency();
   
   useEffect(() => {
     const fetchProductData = () => {
@@ -151,10 +153,10 @@ const ProductDetailsPage: React.FC = () => {
             </div>
             
             <div className="flex items-center space-x-3">
-              <span className="text-3xl font-bold text-white">${product.price.toFixed(2)}</span>
+              <span className="text-3xl font-bold text-white">{formatPrice(convertPrice(product.price))}</span>
               {product.originalPrice && (
                 <>
-                  <span className="text-xl text-gray-400 line-through">${product.originalPrice.toFixed(2)}</span>
+                  <span className="text-xl text-gray-400 line-through">{formatPrice(convertPrice(product.originalPrice))}</span>
                   <span className="text-green-500 text-sm font-bold">
                     {Math.round((1 - product.price / product.originalPrice) * 100)}% OFF
                   </span>
