@@ -68,7 +68,11 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // In Vercel, the built files will be in a different location
+  const isVercel = process.env.VERCEL === '1';
+  const distPath = isVercel
+    ? path.resolve(process.cwd(), "dist/public")
+    : path.resolve(import.meta.dirname, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
