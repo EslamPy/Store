@@ -151,11 +151,6 @@ const Navbar: React.FC = () => {
                 )}
               </div>
               
-              {/* Currency Selector */}
-              <div className="hidden sm:block">
-                <CurrencySelector />
-              </div>
-              
               {/* Cart */}
               <div className="cart-icon-wrapper">
                 <button 
@@ -169,6 +164,11 @@ const Navbar: React.FC = () => {
                     {cartItemCount}
                   </div>
                 )}
+              </div>
+              
+              {/* Currency Selector */}
+              <div className="hidden sm:block">
+                <CurrencySelector />
               </div>
               
               {/* Mobile Menu Button */}
