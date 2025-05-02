@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useRoute, Link } from 'wouter';
 import { useCart } from '../hooks/useCart';
+import { useWishlist } from '../hooks/useWishlist';
 import { useCurrency } from '../context/CurrencyContext';
 import { getProductById, getSimilarProducts } from '../data/products';
 import ProductCard from '../components/ProductCard';
+import ProductImageViewer from '../components/ProductImageViewer';
 
 const ProductDetailsPage: React.FC = () => {
   const [match, params] = useRoute<{ id: string }>('/product/:id');
@@ -12,8 +14,8 @@ const ProductDetailsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
-  const [activeImage, setActiveImage] = useState(0);
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { convertPrice, formatPrice } = useCurrency();
   
   useEffect(() => {
@@ -41,6 +43,16 @@ const ProductDetailsPage: React.FC = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, quantity);
+    }
+  };
+  
+  const handleWishlist = () => {
+    if (product) {
+      if (isInWishlist(product.id)) {
+        removeFromWishlist(product.id);
+      } else {
+        addToWishlist(product);
+      }
     }
   };
   
@@ -81,6 +93,8 @@ const ProductDetailsPage: React.FC = () => {
     ...(product.additionalImages || [])
   ];
   
+  const inWishlist = isInWishlist(product.id);
+  
   return (
     <div className="py-16 bg-[#121212]">
       <div className="container mx-auto px-4">
@@ -103,37 +117,8 @@ const ProductDetailsPage: React.FC = () => {
         
         {/* Product Details */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
-          {/* Product Images */}
-          <div className="space-y-4">
-            <div className="bg-[#1e1e1e] rounded-lg overflow-hidden cyberpunk-border">
-              <img 
-                src={productImages[activeImage]}
-                alt={product.name} 
-                className="w-full h-auto object-contain aspect-square"
-              />
-            </div>
-            
-            {/* Image Thumbnails */}
-            {productImages.length > 1 && (
-              <div className="flex space-x-2 overflow-x-auto pb-2">
-                {productImages.map((image, index) => (
-                  <div 
-                    key={index}
-                    className={`cursor-pointer rounded-lg overflow-hidden border-2 transition-all ${
-                      activeImage === index ? 'border-[#0bff7e] glow-primary' : 'border-transparent'
-                    }`}
-                    onClick={() => setActiveImage(index)}
-                  >
-                    <img 
-                      src={image}
-                      alt={`${product.name} - Image ${index + 1}`} 
-                      className="w-20 h-20 object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
+          {/* Product Images - Now using the new interactive component */}
+          <ProductImageViewer images={productImages} productName={product.name} />
           
           {/* Product Info */}
           <div className="space-y-6">
@@ -210,8 +195,15 @@ const ProductDetailsPage: React.FC = () => {
                   Add to Cart
                 </button>
                 
-                <button className="btn-hover-effect p-3 border border-[#00b3ff] text-white rounded-md hover:bg-[#00b3ff] hover:text-black transition-colors">
-                  <i className="fas fa-heart"></i>
+                <button 
+                  className={`btn-hover-effect p-3 border rounded-md transition-colors ${
+                    inWishlist 
+                      ? 'bg-[#ff6b9d] border-[#ff6b9d] text-white' 
+                      : 'border-[#00b3ff] text-white hover:bg-[#00b3ff] hover:text-black'
+                  }`}
+                  onClick={handleWishlist}
+                >
+                  <i className={`${inWishlist ? 'fas' : 'far'} fa-heart`}></i>
                 </button>
               </div>
               
@@ -219,8 +211,14 @@ const ProductDetailsPage: React.FC = () => {
                 <button className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">
                   <i className="fas fa-share-alt mr-2"></i> Share
                 </button>
-                <button className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">
-                  <i className="fas fa-heart mr-2"></i> Add to Wishlist
+                <button 
+                  className={`transition-colors text-sm ${
+                    inWishlist ? 'text-[#ff6b9d]' : 'text-gray-400 hover:text-[#ff6b9d]'
+                  }`}
+                  onClick={handleWishlist}
+                >
+                  <i className={`${inWishlist ? 'fas' : 'far'} fa-heart mr-2`}></i> 
+                  {inWishlist ? 'Added to Wishlist' : 'Add to Wishlist'}
                 </button>
                 <button className="text-gray-400 hover:text-[#0bff7e] transition-colors text-sm">
                   <i className="fas fa-chart-bar mr-2"></i> Compare
@@ -310,7 +308,7 @@ const ProductDetailsPage: React.FC = () => {
                   
                   <div className="pb-4 border-b border-[#2d2d2d]">
                     <div className="flex justify-between items-center mb-2">
-                      <h4 className="text-white font-bold">Sarah K.</h4>
+                      <h4 className="text-white font-bold">Sarah L.</h4>
                       <div className="text-yellow-400 flex text-sm">
                         <i className="fas fa-star"></i>
                         <i className="fas fa-star"></i>
@@ -321,45 +319,19 @@ const ProductDetailsPage: React.FC = () => {
                     </div>
                     <p className="text-sm text-gray-400 mb-2">Verified Purchase - 1 month ago</p>
                     <p className="text-gray-300">
-                      Great product, but the installation was a bit tricky. 
-                      Once set up, it works flawlessly.
+                      Great value for the price. Installation was straightforward and it works perfectly with my setup.
                     </p>
                   </div>
                 </div>
                 
-                <div className="bg-[#2d2d2d] rounded-lg p-4">
-                  <h3 className="text-white font-bold mb-4">Write a Review</h3>
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-gray-400 mb-1 text-sm">Your Rating</label>
-                      <div className="text-yellow-400 flex text-xl">
-                        <i className="far fa-star cursor-pointer hover:fas"></i>
-                        <i className="far fa-star cursor-pointer hover:fas"></i>
-                        <i className="far fa-star cursor-pointer hover:fas"></i>
-                        <i className="far fa-star cursor-pointer hover:fas"></i>
-                        <i className="far fa-star cursor-pointer hover:fas"></i>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <label className="block text-gray-400 mb-1 text-sm">Your Review</label>
-                      <textarea 
-                        className="w-full bg-[#121212] text-white border border-[#2d2d2d] focus:border-[#0bff7e] rounded-lg px-4 py-3 outline-none"
-                        rows={4}
-                      ></textarea>
-                    </div>
-                    
-                    <button className="px-6 py-2 bg-[#0bff7e] text-black font-bold rounded-md">
-                      Submit Review
-                    </button>
-                  </div>
-                </div>
+                <button className="px-6 py-3 border border-[#0bff7e] text-[#0bff7e] hover:bg-[#0bff7e] hover:text-black transition-colors font-bold rounded-md">
+                  Write a Review
+                </button>
               </div>
             )}
           </div>
         </div>
         
-        {/* Related Products */}
         {similarProducts.length > 0 && (
           <div>
             <h2 className="text-2xl font-orbitron font-bold text-white mb-6">Related Products</h2>

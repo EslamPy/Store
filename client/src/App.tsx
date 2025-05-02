@@ -59,7 +59,10 @@ function App() {
               <Route path="/dashboard" component={DashboardPage} />
               <Route path="/discounts" component={DiscountsPage} />
               <Route path="/article/:id" component={ArticlePage} />
-              <Route path="/admin" component={AdminPage} />
+              <Route path="/admin" component={() => {
+                window.location.href = "/dashboard?tab=products";
+                return null;
+              }} />
               <Route path="/:rest*" component={NotFoundPage} />
             </Switch>
           </main>

@@ -145,4 +145,4 @@ const Reviews: React.FC = () => {
   );
 };
 
-export default Reviews; 
+export default Reviews;

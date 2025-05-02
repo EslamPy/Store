@@ -220,8 +220,7 @@ const Navbar: React.FC = () => {
       </nav>
       
       {/* Add CSS for the wishlist badge */}
-      <style dangerouslySetInnerHTML={{
-        __html: `
+      <style>{`
         .wishlist-icon-wrapper,
         .cart-icon-wrapper {
           position: relative;
@@ -233,7 +232,7 @@ const Navbar: React.FC = () => {
           top: -8px;
           right: -10px;
         }
-      `}} />
+      `}</style>
     </>
   );
 };

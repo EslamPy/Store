@@ -23,17 +23,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
     if (card) {
       const handleMouseEnter = () => {
         gsap.to(card, {
-          y: -10,
-          boxShadow: '0 10px 25px -5px rgba(11, 255, 126, 0.2)',
-          duration: 0.3
+          y: -15,
+          boxShadow: '0 15px 35px -10px rgba(11, 255, 126, 0.3), 0 5px 15px rgba(0, 179, 255, 0.2)',
+          duration: 0.4,
+          ease: "power2.out"
         });
       };
       
       const handleMouseLeave = () => {
         gsap.to(card, {
           y: 0,
-          boxShadow: '0 0 0 0 rgba(0, 0, 0, 0)',
-          duration: 0.3
+          boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)',
+          duration: 0.4,
+          ease: "power2.out"
         });
       };
       
@@ -117,43 +119,51 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
   return (
     <div 
       ref={cardRef}
-      className="product-card bg-[#1e1e1e] rounded-lg overflow-hidden cyberpunk-border"
+      className="product-card bg-gradient-to-b from-[#202020] to-[#151515] rounded-xl overflow-hidden shadow-lg relative"
       data-aos="fade-up"
     >
+      <div className="absolute inset-0 cyberpunk-border opacity-80"></div>
+      <div className="absolute -inset-0.5 bg-gradient-to-r from-[#0bff7e] via-[#00b3ff] to-[#9d00ff] opacity-20 blur-sm rounded-xl"></div>
+      
       <Link href={`/product/${product.id}`}>
-        <div className="relative h-60 group">
+        <div className="relative h-64 group overflow-hidden">
+          <div className="absolute -inset-1 bg-gradient-to-t from-black via-transparent to-transparent z-10 opacity-60"></div>
+          <div className="absolute inset-0 bg-[url('/src/assets/grid-pattern.svg')] bg-opacity-5 mix-blend-overlay"></div>
+          
           <img 
             src={product.image}
             alt={product.name} 
-            className="w-full h-full object-cover transition-all duration-500 group-hover:scale-110"
+            className="w-full h-full object-cover transition-all duration-700 group-hover:scale-110 group-hover:rotate-1"
           />
+          
           {showBadge && product.badge && (
-            <div className="absolute top-2 right-2">
-              <div className="px-2 py-1 bg-red-600 text-white text-xs font-bold rounded-full uppercase">
+            <div className="absolute top-3 right-3 z-20">
+              <div className="px-3 py-1.5 bg-gradient-to-r from-[#ff3636] to-[#ff6b9d] text-white text-xs font-bold rounded-full uppercase shadow-lg backdrop-blur-sm">
                 {product.badge}
               </div>
             </div>
           )}
-          <div className="product-overlay absolute inset-0 bg-[#121212] bg-opacity-70 flex flex-col items-center justify-center space-y-3">
+          
+          <div className="product-overlay absolute inset-0 z-10 backdrop-blur-sm bg-gradient-to-t from-[#121212] via-[#121212]/80 to-transparent flex flex-col items-center justify-center space-y-4 px-4">
             <button 
-              className="btn-hover-effect px-4 py-2 bg-[#0bff7e] text-black font-bold rounded-md text-sm"
+              className="btn-hover-effect w-full px-5 py-2.5 bg-gradient-to-r from-[#0bff7e] to-[#0bdf7e] text-black font-bold rounded-md text-sm transform transition-all shadow-lg shadow-[#0bff7e]/20"
               onClick={handleQuickView}
             >
-              Quick View
+              <i className="fas fa-eye mr-2"></i>Quick View
             </button>
             <button 
-              className="btn-hover-effect px-4 py-2 bg-[#00b3ff] text-black font-bold rounded-md text-sm"
+              className="btn-hover-effect w-full px-5 py-2.5 bg-gradient-to-r from-[#00b3ff] to-[#0090ff] text-black font-bold rounded-md text-sm transform transition-all shadow-lg shadow-[#00b3ff]/20"
               onClick={handleAddToCart}
             >
-              Add to Cart
+              <i className="fas fa-shopping-cart mr-2"></i>Add to Cart
             </button>
           </div>
         </div>
         
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-gray-400">{product.category}</span>
-            <div className="text-yellow-400 text-xs flex">
+        <div className="relative p-5 z-10">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-medium px-2 py-1 bg-[#252525] rounded-md text-[#0bff7e]">{product.category}</span>
+            <div className="text-yellow-400 text-xs flex bg-[#252525] px-2 py-1 rounded-md">
               {[...Array(5)].map((_, i) => (
                 <i 
                   key={i} 
@@ -162,13 +172,21 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, showBadge = false })
               ))}
             </div>
           </div>
-          <h3 className="text-lg font-orbitron font-bold text-white mb-2">{product.name}</h3>
+          <h3 className="text-lg font-orbitron font-bold text-white mb-3 line-clamp-2">{product.name}</h3>
           <div className="flex justify-between items-center">
-            <span className="text-xl font-bold text-white">{formatPrice(convertPrice(product.price))}</span>
+            <div className="flex flex-col">
+              <span className="text-xs text-gray-400 line-through">
+                {formatPrice(convertPrice(product.price * 1.2))}
+              </span>
+              <span className="text-xl font-bold text-white bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] bg-clip-text text-transparent">
+                {formatPrice(convertPrice(product.price))}
+              </span>
+            </div>
             <button 
-              className={`transition-colors ${isInWishlist(product.id) 
-                ? 'text-[#ff6b9d] hover:text-white' 
-                : 'text-gray-400 hover:text-[#ff6b9d]'}`}
+              className={`transition-all duration-300 h-10 w-10 rounded-full flex items-center justify-center ${
+                isInWishlist(product.id) 
+                ? 'bg-[#ff6b9d]/20 text-[#ff6b9d]' 
+                : 'bg-[#252525] text-gray-400 hover:bg-[#ff6b9d]/20 hover:text-[#ff6b9d]'}`}
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();

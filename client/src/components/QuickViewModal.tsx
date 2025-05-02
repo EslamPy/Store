@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { Link } from 'wouter';
+import { Link, useLocation } from 'wouter';
 import { useCart } from '../hooks/useCart';
+import { useWishlist } from '../hooks/useWishlist';
 import { gsap } from 'gsap';
 
 const QuickViewModal: React.FC = () => {
   const { selectedProduct, isQuickViewOpen, closeQuickView, addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const [, navigate] = useLocation();
   const modalRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [quantity, setQuantity] = useState(1);
@@ -54,7 +57,30 @@ const QuickViewModal: React.FC = () => {
     }
   };
   
+  const handleWishlist = () => {
+    if (selectedProduct) {
+      if (isInWishlist(selectedProduct.id)) {
+        removeFromWishlist(selectedProduct.id);
+      } else {
+        addToWishlist(selectedProduct);
+      }
+    }
+  };
+  
+  const handleViewDetails = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (selectedProduct) {
+      handleClose();
+      // Navigate after the modal closes
+      setTimeout(() => {
+        navigate(`/product/${selectedProduct.id}`);
+      }, 300);
+    }
+  };
+  
   if (!isQuickViewOpen || !selectedProduct) return null;
+  
+  const inWishlist = selectedProduct ? isInWishlist(selectedProduct.id) : false;
   
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -153,8 +179,14 @@ const QuickViewModal: React.FC = () => {
               </div>
               
               <div className="flex space-x-4">
-                <button className="text-gray-400 hover:text-[#0bff7e] transition-colors">
-                  <i className="fas fa-heart mr-2"></i> Add to Wishlist
+                <button 
+                  className={`transition-colors ${inWishlist 
+                    ? 'text-[#ff6b9d] hover:text-gray-400' 
+                    : 'text-gray-400 hover:text-[#ff6b9d]'}`}
+                  onClick={handleWishlist}
+                >
+                  <i className={`${inWishlist ? 'fas' : 'far'} fa-heart mr-2`}></i> 
+                  {inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
                 </button>
                 <button className="text-gray-400 hover:text-[#0bff7e] transition-colors">
                   <i className="fas fa-share-alt mr-2"></i> Share
@@ -162,11 +194,12 @@ const QuickViewModal: React.FC = () => {
               </div>
               
               <div className="mt-4">
-                <Link href={`/product/${selectedProduct.id}`}>
-                  <a className="text-[#00b3ff] hover:underline">
-                    View full details <i className="fas fa-arrow-right ml-1"></i>
-                  </a>
-                </Link>
+                <button 
+                  onClick={handleViewDetails}
+                  className="text-[#00b3ff] hover:underline flex items-center"
+                >
+                  View full details <i className="fas fa-arrow-right ml-1"></i>
+                </button>
               </div>
             </div>
           </div>
