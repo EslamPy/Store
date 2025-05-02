@@ -476,7 +476,7 @@ const DashboardPage: React.FC = () => {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         className={`flex items-center justify-start space-x-3 px-4 py-3 rounded-xl w-full mb-2 ${
-                          activeTab === 'products' 
+                    activeTab === 'products' 
                             ? 'bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] text-black font-bold' 
                             : 'text-gray-300 hover:bg-[#1a1a1a]'
                         }`}
@@ -491,9 +491,9 @@ const DashboardPage: React.FC = () => {
                           x: 5, 
                           transition: { type: "spring", stiffness: 400, damping: 10 } 
                         }}
-                        onClick={() => setActiveTab('orders')}
+                  onClick={() => setActiveTab('orders')}
                         className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${
-                          activeTab === 'orders' 
+                    activeTab === 'orders' 
                           ? 'bg-[#0bff7e] bg-opacity-10 text-[#0bff7e]' 
                           : 'text-gray-400 hover:bg-[#2a2a2a] hover:text-white'
                         }`}
@@ -511,7 +511,7 @@ const DashboardPage: React.FC = () => {
                           x: 5, 
                           transition: { type: "spring", stiffness: 400, damping: 10 } 
                         }}
-                        onClick={() => setActiveTab('customers')}
+                  onClick={() => setActiveTab('customers')}
                         className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${
                     activeTab === 'customers' 
                             ? 'bg-[#0bff7e] bg-opacity-10 text-[#0bff7e]' 
@@ -528,7 +528,7 @@ const DashboardPage: React.FC = () => {
                           x: 5, 
                           transition: { type: "spring", stiffness: 400, damping: 10 } 
                         }}
-                        onClick={() => setActiveTab('analytics')}
+                  onClick={() => setActiveTab('analytics')}
                         className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${
                     activeTab === 'analytics' 
                             ? 'bg-[#0bff7e] bg-opacity-10 text-[#0bff7e]' 
@@ -565,7 +565,7 @@ const DashboardPage: React.FC = () => {
                           x: 5, 
                           transition: { type: "spring", stiffness: 400, damping: 10 } 
                         }}
-                        onClick={() => setActiveTab('settings')}
+                  onClick={() => setActiveTab('settings')}
                         className={`w-full flex items-center px-4 py-3 rounded-xl transition-colors ${
                     activeTab === 'settings' 
                             ? 'bg-[#0bff7e] bg-opacity-10 text-[#0bff7e]' 
@@ -971,7 +971,7 @@ const DashboardPage: React.FC = () => {
                           <i className="fas fa-times mr-2"></i>
                           Cancel
                         </motion.button>
-                      </div>
+              </div>
                     ) : (
                       <motion.button 
                         whileHover={{ scale: 1.05 }}
@@ -2057,6 +2057,469 @@ const DashboardPage: React.FC = () => {
                 </motion.div>
             )}
 
+            {activeTab === 'customers' && (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  className="bg-[#1a1a1a] rounded-2xl shadow-lg border border-[#2a2a2a] p-12 text-center"
+                >
+                  <motion.div 
+                    variants={itemVariants}
+                    className="w-24 h-24 mx-auto flex items-center justify-center bg-[#2a2a2a] rounded-full text-gray-400 mb-6"
+                  >
+                    <i className="fas fa-users text-4xl"></i>
+                  </motion.div>
+                  
+                  <motion.h3 
+                    variants={itemVariants}
+                    className="text-2xl font-orbitron font-bold text-white mb-4"
+                  >
+                    Customers Section
+                  </motion.h3>
+                  
+                  <motion.p 
+                    variants={itemVariants}
+                    className="text-gray-400 mb-8 max-w-lg mx-auto"
+                  >
+                    This section is currently under development. Our team is working hard to bring you amazing new features soon. Check back later for updates!
+                  </motion.p>
+                  
+                  <motion.button 
+                    variants={itemVariants}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setActiveTab('overview')}
+                    className="px-6 py-3 bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] text-black font-bold rounded-xl shadow-lg"
+                  >
+                    <i className="fas fa-arrow-left mr-2"></i>
+                    Back to Overview
+                  </motion.button>
+                </motion.div>
+            )}
+            
+            {/* Orders Tab */}
+            {activeTab === 'orders' && (
+                <motion.div
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-orbitron font-bold text-white">Orders Management</h2>
+                    <div className="flex space-x-3">
+                      <motion.div 
+                        whileHover={{ scale: 1.03 }}
+                        className="relative"
+                      >
+                        <input 
+                          type="text" 
+                          placeholder="Search orders..." 
+                          className="bg-[#2a2a2a] text-white text-sm rounded-xl pl-10 pr-4 py-2 w-64 focus:outline-none focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-50"
+                        />
+                        <i className="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                      </motion.div>
+                      
+                      <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-4 py-2 bg-[#2a2a2a] text-white rounded-xl hover:bg-[#3a3a3a] transition-colors"
+                      >
+                        <i className="fas fa-filter mr-2"></i>
+                        Filter
+                      </motion.button>
+                      
+                      <motion.button 
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-4 py-2 bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] text-black font-bold rounded-xl flex items-center shadow-lg"
+                      >
+                        <i className="fas fa-download mr-2"></i>
+                        Export
+                      </motion.button>
+                    </div>
+                  </div>
+                  
+                  {/* Order Status Cards */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.03 }}
+                      className="bg-[#1a1a1a] rounded-2xl p-5 border border-[#2a2a2a] shadow-lg"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-xl bg-blue-500 bg-opacity-20 flex items-center justify-center mr-4">
+                          <i className="fas fa-spinner text-blue-400"></i>
+                        </div>
+                        <div>
+                          <span className="text-gray-400 text-sm">Pending</span>
+                          <div className="text-xl font-bold text-white">24</div>
+                        </div>
+                        <div className="ml-auto">
+                          <span className="text-blue-400 text-xs bg-blue-400 bg-opacity-20 px-2 py-1 rounded-md">
+                            15%
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.03 }}
+                      className="bg-[#1a1a1a] rounded-2xl p-5 border border-[#2a2a2a] shadow-lg"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-xl bg-yellow-500 bg-opacity-20 flex items-center justify-center mr-4">
+                          <i className="fas fa-box text-yellow-400"></i>
+                        </div>
+                        <div>
+                          <span className="text-gray-400 text-sm">Processing</span>
+                          <div className="text-xl font-bold text-white">42</div>
+                        </div>
+                        <div className="ml-auto">
+                          <span className="text-yellow-400 text-xs bg-yellow-400 bg-opacity-20 px-2 py-1 rounded-md">
+                            27%
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.03 }}
+                      className="bg-[#1a1a1a] rounded-2xl p-5 border border-[#2a2a2a] shadow-lg"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-xl bg-green-500 bg-opacity-20 flex items-center justify-center mr-4">
+                          <i className="fas fa-truck text-green-400"></i>
+                        </div>
+                        <div>
+                          <span className="text-gray-400 text-sm">Shipped</span>
+                          <div className="text-xl font-bold text-white">85</div>
+                        </div>
+                        <div className="ml-auto">
+                          <span className="text-green-400 text-xs bg-green-400 bg-opacity-20 px-2 py-1 rounded-md">
+                            54%
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.03 }}
+                      className="bg-[#1a1a1a] rounded-2xl p-5 border border-[#2a2a2a] shadow-lg"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-xl bg-red-500 bg-opacity-20 flex items-center justify-center mr-4">
+                          <i className="fas fa-times-circle text-red-400"></i>
+                        </div>
+                        <div>
+                          <span className="text-gray-400 text-sm">Cancelled</span>
+                          <div className="text-xl font-bold text-white">6</div>
+                        </div>
+                        <div className="ml-auto">
+                          <span className="text-red-400 text-xs bg-red-400 bg-opacity-20 px-2 py-1 rounded-md">
+                            4%
+                          </span>
+                        </div>
+                      </div>
+                    </motion.div>
+                  </div>
+                  
+                  {/* Orders Table */}
+                  <motion.div
+                    variants={cardVariants}
+                    className="bg-[#1a1a1a] rounded-2xl shadow-lg border border-[#2a2a2a] overflow-hidden mb-8"
+                  >
+                    <div className="p-6 border-b border-[#2a2a2a] flex justify-between items-center">
+                      <h3 className="text-xl font-orbitron font-bold text-white">Recent Orders</h3>
+                      <div className="flex space-x-3">
+                        <button className="px-3 py-1.5 bg-[#2a2a2a] text-gray-400 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors">All</button>
+                        <button className="px-3 py-1.5 bg-[#0bff7e] bg-opacity-20 text-[#0bff7e] rounded-lg text-sm font-medium">Today</button>
+                        <button className="px-3 py-1.5 bg-[#2a2a2a] text-gray-400 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors">Week</button>
+                        <button className="px-3 py-1.5 bg-[#2a2a2a] text-gray-400 rounded-lg text-sm hover:bg-[#3a3a3a] transition-colors">Month</button>
+                      </div>
+                    </div>
+                    
+                    <div className="overflow-x-auto">
+                      <table className="w-full min-w-full">
+                        <thead>
+                          <tr className="border-b border-[#2a2a2a] bg-[#202020]">
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Order ID</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Customer</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Payment</th>
+                            <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {[
+                            { id: 'ORD-8423', customer: 'John Smith', email: 'john@example.com', date: '2023-08-12', amount: 459.99, status: 'Delivered', payment: 'Paid', paymentMethod: 'Credit Card' },
+                            { id: 'ORD-8422', customer: 'Emma Johnson', email: 'emma@example.com', date: '2023-08-11', amount: 899.99, status: 'Processing', payment: 'Paid', paymentMethod: 'PayPal' },
+                            { id: 'ORD-8421', customer: 'Michael Brown', email: 'michael@example.com', date: '2023-08-11', amount: 329.97, status: 'Shipped', payment: 'Paid', paymentMethod: 'Credit Card' },
+                            { id: 'ORD-8420', customer: 'Sarah Garcia', email: 'sarah@example.com', date: '2023-08-10', amount: 1239.95, status: 'Pending', payment: 'Pending', paymentMethod: 'Bank Transfer' },
+                            { id: 'ORD-8419', customer: 'David Wilson', email: 'david@example.com', date: '2023-08-10', amount: 549.50, status: 'Cancelled', payment: 'Refunded', paymentMethod: 'Credit Card' },
+                            { id: 'ORD-8418', customer: 'Lisa Anderson', email: 'lisa@example.com', date: '2023-08-09', amount: 789.95, status: 'Delivered', payment: 'Paid', paymentMethod: 'PayPal' },
+                            { id: 'ORD-8417', customer: 'Robert Martinez', email: 'robert@example.com', date: '2023-08-08', amount: 129.99, status: 'Delivered', payment: 'Paid', paymentMethod: 'Credit Card' },
+                          ].map((order, index) => (
+                            <motion.tr 
+                              key={index} 
+                              variants={itemVariants}
+                              className="border-b border-[#2a2a2a] hover:bg-[#202020]"
+                            >
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="font-medium text-[#00b3ff]">{order.id}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex items-center">
+                                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0bff7e] to-[#00b3ff] flex items-center justify-center text-black font-bold mr-2">
+                                    {order.customer.charAt(0)}
+                                  </div>
+                                  <div>
+                                    <div className="text-white">{order.customer}</div>
+                                    <div className="text-gray-400 text-xs">{order.email}</div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap text-gray-300">
+                                {order.date}
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className="text-white font-bold">${order.amount.toFixed(2)}</span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                                  order.status === 'Delivered' ? 'bg-green-900 bg-opacity-20 text-green-500' : 
+                                  order.status === 'Processing' ? 'bg-yellow-900 bg-opacity-20 text-yellow-500' : 
+                                  order.status === 'Shipped' ? 'bg-blue-900 bg-opacity-20 text-blue-500' : 
+                                  order.status === 'Pending' ? 'bg-purple-900 bg-opacity-20 text-purple-500' : 
+                                  'bg-red-900 bg-opacity-20 text-red-500'
+                                }`}>
+                                  {order.status}
+                                </span>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div>
+                                  <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                                    order.payment === 'Paid' ? 'bg-green-900 bg-opacity-20 text-green-500' : 
+                                    order.payment === 'Pending' ? 'bg-yellow-900 bg-opacity-20 text-yellow-500' : 
+                                    'bg-red-900 bg-opacity-20 text-red-500'
+                                  }`}>
+                                    {order.payment}
+                                  </span>
+                                  <div className="text-gray-400 text-xs mt-1">{order.paymentMethod}</div>
+                                </div>
+                              </td>
+                              <td className="px-6 py-4 whitespace-nowrap">
+                                <div className="flex space-x-2">
+                                  <motion.button 
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-2 text-[#00b3ff] hover:bg-[#00b3ff] hover:bg-opacity-10 rounded-lg transition-colors"
+                                  >
+                                    <i className="fas fa-eye"></i>
+                                  </motion.button>
+                                  <motion.button 
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-2 text-[#0bff7e] hover:bg-[#0bff7e] hover:bg-opacity-10 rounded-lg transition-colors"
+                                  >
+                                    <i className="fas fa-edit"></i>
+                                  </motion.button>
+                                  <motion.button 
+                                    whileHover={{ scale: 1.1 }}
+                                    whileTap={{ scale: 0.9 }}
+                                    className="p-2 text-red-500 hover:bg-red-500 hover:bg-opacity-10 rounded-lg transition-colors"
+                                  >
+                                    <i className="fas fa-trash-alt"></i>
+                                  </motion.button>
+                                </div>
+                              </td>
+                            </motion.tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                    
+                    <div className="p-6 flex justify-between items-center border-t border-[#2a2a2a]">
+                      <div className="text-gray-400 text-sm">
+                        Showing <span className="text-white">7</span> of <span className="text-white">157</span> orders
+                      </div>
+                      <div className="flex space-x-1">
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2a2a2a] text-gray-400"
+                        >
+                          <i className="fas fa-chevron-left"></i>
+                        </motion.button>
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#0bff7e] text-black"
+                        >
+                          1
+                        </motion.button>
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2a2a2a] text-gray-400"
+                        >
+                          2
+                        </motion.button>
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2a2a2a] text-gray-400"
+                        >
+                          3
+                        </motion.button>
+                        <motion.button 
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="w-8 h-8 flex items-center justify-center rounded-lg bg-[#2a2a2a] text-gray-400"
+                        >
+                          <i className="fas fa-chevron-right"></i>
+                        </motion.button>
+                      </div>
+                    </div>
+                  </motion.div>
+                  
+                  {/* Bottom Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    {/* Order Stats */}
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.01 }}
+                      className="bg-[#1a1a1a] rounded-2xl shadow-lg border border-[#2a2a2a] overflow-hidden"
+                    >
+                      <div className="p-6 border-b border-[#2a2a2a]">
+                        <h3 className="text-xl font-orbitron font-bold text-white">Order Statistics</h3>
+                      </div>
+                      
+                      <div className="p-6">
+                        <div className="flex items-center justify-between mb-6">
+                          <div>
+                            <div className="text-gray-400 text-sm mb-1">Total Orders</div>
+                            <div className="text-2xl font-bold text-white">157</div>
+                          </div>
+                          <div>
+                            <div className="text-gray-400 text-sm mb-1">Total Revenue</div>
+                            <div className="text-2xl font-bold text-white">$45,892.74</div>
+                          </div>
+                          <div>
+                            <div className="text-gray-400 text-sm mb-1">Avg Order Value</div>
+                            <div className="text-2xl font-bold text-white">$292.31</div>
+                          </div>
+                        </div>
+                        
+                        <div className="space-y-4">
+                          <div>
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-400">Today</span>
+                              <span className="text-white">12 orders</span>
+                            </div>
+                            <div className="w-full bg-[#2a2a2a] rounded-full h-2.5 overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "12%" }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                className="bg-[#0bff7e] h-2.5 rounded-full"
+                              ></motion.div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-400">This Week</span>
+                              <span className="text-white">43 orders</span>
+                            </div>
+                            <div className="w-full bg-[#2a2a2a] rounded-full h-2.5 overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "43%" }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                className="bg-[#00b3ff] h-2.5 rounded-full"
+                              ></motion.div>
+                            </div>
+                          </div>
+                          
+                          <div>
+                            <div className="flex justify-between text-sm mb-2">
+                              <span className="text-gray-400">This Month</span>
+                              <span className="text-white">157 orders</span>
+                            </div>
+                            <div className="w-full bg-[#2a2a2a] rounded-full h-2.5 overflow-hidden">
+                              <motion.div
+                                initial={{ width: 0 }}
+                                animate={{ width: "75%" }}
+                                transition={{ duration: 1, ease: "easeOut" }}
+                                className="bg-[#9d00ff] h-2.5 rounded-full"
+                              ></motion.div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                    
+                    {/* Recent Activities */}
+                    <motion.div
+                      variants={cardVariants}
+                      whileHover={{ scale: 1.01 }}
+                      className="bg-[#1a1a1a] rounded-2xl shadow-lg border border-[#2a2a2a] overflow-hidden"
+                    >
+                      <div className="p-6 border-b border-[#2a2a2a]">
+                        <h3 className="text-xl font-orbitron font-bold text-white">Recent Activities</h3>
+                      </div>
+                      
+                      <div className="divide-y divide-[#2a2a2a]">
+                        {[
+                          { action: 'Order Placed', orderId: 'ORD-8423', user: 'Customer', time: '10 mins ago', icon: 'fa-shopping-cart', color: 'green' },
+                          { action: 'Payment Received', orderId: 'ORD-8423', user: 'System', time: '12 mins ago', icon: 'fa-credit-card', color: 'blue' },
+                          { action: 'Order Updated', orderId: 'ORD-8421', user: 'Admin', time: '25 mins ago', icon: 'fa-edit', color: 'purple' },
+                          { action: 'Order Shipped', orderId: 'ORD-8418', user: 'Admin', time: '1 hour ago', icon: 'fa-truck', color: 'orange' },
+                          { action: 'Order Cancelled', orderId: 'ORD-8419', user: 'Customer', time: '2 hours ago', icon: 'fa-times-circle', color: 'red' }
+                        ].map((activity, index) => (
+                          <motion.div 
+                            key={index}
+                            variants={itemVariants}
+                            whileHover={{ backgroundColor: 'rgba(42, 42, 42, 0.3)' }}
+                            className="p-4 flex items-center"
+                          >
+                            <div className={`w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center mr-3 bg-${activity.color}-900 bg-opacity-20`}>
+                              <i className={`fas ${activity.icon} text-${activity.color}-500`}></i>
+                            </div>
+                            <div className="flex-grow">
+                              <div className="flex justify-between">
+                                <span className="text-sm font-medium text-white">{activity.action}</span>
+                                <span className="text-xs text-gray-400">{activity.time}</span>
+                              </div>
+                              <div className="flex justify-between mt-1">
+                                <span className="text-xs text-[#00b3ff]">{activity.orderId}</span>
+                                <span className="text-xs text-gray-400">by {activity.user}</span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        ))}
+                      </div>
+                      
+                      <div className="p-4 flex justify-center border-t border-[#2a2a2a]">
+                        <motion.button
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          className="text-[#0bff7e] text-sm font-medium hover:underline"
+                        >
+                          View All Activities
+                        </motion.button>
+                      </div>
+                    </motion.div>
+                  </div>
+                </motion.div>
+            )}
+
             {/* Settings Tab */}
             {activeTab === 'settings' && (
               <motion.div
@@ -2075,7 +2538,7 @@ const DashboardPage: React.FC = () => {
                     <i className="fas fa-save mr-2"></i>
                     Save Changes
                   </motion.button>
-          </div>
+              </div>
                 
                 {/* Show success message if settings were saved */}
                 {showSuccessMessage && (
@@ -2100,7 +2563,7 @@ const DashboardPage: React.FC = () => {
                     >
                       <div className="p-6 border-b border-[#2a2a2a]">
                         <h3 className="text-xl font-orbitron font-bold text-white">Settings Menu</h3>
-        </div>
+          </div>
                       
                       <div className="p-3 space-y-1">
                         <motion.button 
@@ -2193,7 +2656,7 @@ const DashboardPage: React.FC = () => {
                           <i className="fas fa-credit-card w-6"></i>
                           <span>Billing</span>
                         </motion.button>
-                      </div>
+        </div>
                     </motion.div>
                   </div>
                   
