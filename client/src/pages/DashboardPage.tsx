@@ -32,6 +32,36 @@ const DashboardPage: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
+  // Add new state for settings form
+  const [profileSettings, setProfileSettings] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    jobTitle: '',
+    bio: ''
+  });
+  const [passwordSettings, setPasswordSettings] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  });
+  const [settingsSaved, setSettingsSaved] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
+
+  // Add state for notification settings
+  const [notificationSettings, setNotificationSettings] = useState({
+    orderUpdates: true,
+    inventoryAlerts: true,
+    customerMessages: true,
+    marketingPromotions: false,
+    emailNotifications: true,
+    pushNotifications: true,
+    browserNotifications: false,
+    smsNotifications: false,
+    twoFactorEnabled: true
+  });
+
   // Check for URL query parameters on component mount
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -98,7 +128,22 @@ const DashboardPage: React.FC = () => {
     // Get user info
     const user = localStorage.getItem('user');
     if (user) {
-      setUserInfo(JSON.parse(user));
+      const parsedUser = JSON.parse(user);
+      setUserInfo(parsedUser);
+      
+      // Initialize profile settings with user data
+      setProfileSettings({
+        name: parsedUser.name || '',
+        email: parsedUser.email || '',
+        phone: parsedUser.phone || '',
+        jobTitle: parsedUser.jobTitle || '',
+        bio: parsedUser.bio || ''
+      });
+      
+      // Initialize notification settings if they exist
+      if (parsedUser.notificationSettings) {
+        setNotificationSettings(parsedUser.notificationSettings);
+      }
     }
     
     // Load authorized users
@@ -244,6 +289,79 @@ const DashboardPage: React.FC = () => {
   const filteredProducts = products.filter(product => 
     product.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Handle profile settings change
+  const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setProfileSettings({
+      ...profileSettings,
+      [name]: value
+    });
+  };
+
+  // Handle password settings change
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setPasswordSettings({
+      ...passwordSettings,
+      [name]: value
+    });
+  };
+
+  // Handle notification toggle
+  const handleNotificationToggle = (settingName: string) => {
+    setNotificationSettings(prevSettings => ({
+      ...prevSettings,
+      [settingName]: !prevSettings[settingName as keyof typeof prevSettings]
+    }));
+  };
+
+  // Handle settings save
+  const handleSaveSettings = () => {
+    // Validate form
+    const errors: {[key: string]: string} = {};
+    
+    if (passwordSettings.newPassword && passwordSettings.newPassword.length < 8) {
+      errors.newPassword = 'Password must be at least 8 characters';
+    }
+    
+    if (passwordSettings.newPassword && passwordSettings.newPassword !== passwordSettings.confirmPassword) {
+      errors.confirmPassword = 'Passwords do not match';
+    }
+    
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+    
+    // Clear any previous errors
+    setFormErrors({});
+    
+    // Update user info in localStorage
+    if (userInfo) {
+      const updatedUser = {
+        ...userInfo,
+        name: profileSettings.name,
+        email: profileSettings.email,
+        phone: profileSettings.phone,
+        jobTitle: profileSettings.jobTitle,
+        bio: profileSettings.bio,
+        notificationSettings
+      };
+      
+      localStorage.setItem('user', JSON.stringify(updatedUser));
+      setUserInfo(updatedUser);
+    }
+    
+    // Show success message
+    setShowSuccessMessage(true);
+    setSettingsSaved(true);
+    
+    // Hide success message after 3 seconds
+    setTimeout(() => {
+      setShowSuccessMessage(false);
+    }, 3000);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#121212] to-[#1c1c1c]">
@@ -1951,12 +2069,26 @@ const DashboardPage: React.FC = () => {
                   <motion.button 
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
+                    onClick={handleSaveSettings}
                     className="px-4 py-2 bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] text-black font-bold rounded-xl flex items-center shadow-lg"
                   >
                     <i className="fas fa-save mr-2"></i>
                     Save Changes
                   </motion.button>
           </div>
+                
+                {/* Show success message if settings were saved */}
+                {showSuccessMessage && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="bg-green-900 bg-opacity-20 border border-green-500 text-green-500 px-4 py-3 rounded-xl mb-6 flex items-center"
+                  >
+                    <i className="fas fa-check-circle mr-2"></i>
+                    Settings have been saved successfully!
+                  </motion.div>
+                )}
                 
                 {/* Settings Navigation */}
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -2088,7 +2220,7 @@ const DashboardPage: React.FC = () => {
                             whileHover={{ scale: 1.05 }}
                           >
                             <div className="w-full h-full rounded-full bg-gradient-to-br from-[#0bff7e] to-[#00b3ff] flex items-center justify-center text-black text-3xl font-bold">
-                              {userInfo?.name.charAt(0)}
+                              {profileSettings.name.charAt(0)}
                             </div>
                             <div className="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#1a1a1a] border-2 border-[#1a1a1a] flex items-center justify-center cursor-pointer">
                               <i className="fas fa-camera text-white text-sm"></i>
@@ -2096,8 +2228,8 @@ const DashboardPage: React.FC = () => {
                           </motion.div>
                           
                           <div className="flex-grow">
-                            <h4 className="text-white text-xl font-bold">{userInfo?.name}</h4>
-                            <p className="text-gray-400">{userInfo?.email}</p>
+                            <h4 className="text-white text-xl font-bold">{profileSettings.name}</h4>
+                            <p className="text-gray-400">{profileSettings.email}</p>
                             <div className="flex mt-2">
                               <span className="text-xs px-2 py-1 bg-[#0bff7e] bg-opacity-20 text-[#0bff7e] rounded-md mr-2">
                                 {userInfo?.role}
@@ -2119,7 +2251,9 @@ const DashboardPage: React.FC = () => {
                               </div>
                               <input 
                                 type="text" 
-                                defaultValue={userInfo?.name}
+                                name="name"
+                                value={profileSettings.name}
+                                onChange={handleProfileChange}
                                 className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
                               />
                             </div>
@@ -2133,7 +2267,9 @@ const DashboardPage: React.FC = () => {
                               </div>
                               <input 
                                 type="email" 
-                                defaultValue={userInfo?.email}
+                                name="email"
+                                value={profileSettings.email}
+                                onChange={handleProfileChange}
                                 className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
                               />
                             </div>
@@ -2147,6 +2283,9 @@ const DashboardPage: React.FC = () => {
                               </div>
                               <input 
                                 type="tel" 
+                                name="phone"
+                                value={profileSettings.phone}
+                                onChange={handleProfileChange}
                                 placeholder="+1 (123) 456-7890"
                                 className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
                               />
@@ -2161,6 +2300,9 @@ const DashboardPage: React.FC = () => {
                               </div>
                               <input 
                                 type="text" 
+                                name="jobTitle"
+                                value={profileSettings.jobTitle}
+                                onChange={handleProfileChange}
                                 placeholder="Store Manager"
                                 className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
                               />
@@ -2172,6 +2314,9 @@ const DashboardPage: React.FC = () => {
                             <div className="relative">
                               <textarea 
                                 rows={4}
+                                name="bio"
+                                value={profileSettings.bio}
+                                onChange={handleProfileChange}
                                 placeholder="Tell us something about yourself..."
                                 className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl p-4 outline-none"
                               ></textarea>
@@ -2203,6 +2348,9 @@ const DashboardPage: React.FC = () => {
                                 </div>
                                 <input 
                                   type="password" 
+                                  name="currentPassword"
+                                  value={passwordSettings.currentPassword}
+                                  onChange={handlePasswordChange}
                                   placeholder="••••••••"
                                   className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
                                 />
@@ -2216,10 +2364,16 @@ const DashboardPage: React.FC = () => {
                                   <i className="fas fa-key text-gray-500"></i>
                                 </div>
                                 <input 
-                                  type="password" 
+                                  type="password"
+                                  name="newPassword"
+                                  value={passwordSettings.newPassword}
+                                  onChange={handlePasswordChange}
                                   placeholder="••••••••"
-                                  className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
+                                  className={`w-full bg-[#2a2a2a] text-white border ${formErrors.newPassword ? 'border-red-500' : 'border-[#3a3a3a]'} focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none`}
                                 />
+                                {formErrors.newPassword && (
+                                  <p className="text-red-500 text-xs mt-1">{formErrors.newPassword}</p>
+                                )}
                               </div>
                             </div>
                             
@@ -2230,10 +2384,16 @@ const DashboardPage: React.FC = () => {
                                   <i className="fas fa-check-circle text-gray-500"></i>
                                 </div>
                                 <input 
-                                  type="password" 
+                                  type="password"
+                                  name="confirmPassword"
+                                  value={passwordSettings.confirmPassword}
+                                  onChange={handlePasswordChange}
                                   placeholder="••••••••"
-                                  className="w-full bg-[#2a2a2a] text-white border border-[#3a3a3a] focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none"
+                                  className={`w-full bg-[#2a2a2a] text-white border ${formErrors.confirmPassword ? 'border-red-500' : 'border-[#3a3a3a]'} focus:border-[#0bff7e] focus:ring-2 focus:ring-[#0bff7e] focus:ring-opacity-20 rounded-xl pl-10 pr-4 py-3 outline-none`}
                                 />
+                                {formErrors.confirmPassword && (
+                                  <p className="text-red-500 text-xs mt-1">{formErrors.confirmPassword}</p>
+                                )}
                               </div>
                             </div>
                           </div>
@@ -2242,6 +2402,7 @@ const DashboardPage: React.FC = () => {
                             <motion.button 
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={handleSaveSettings}
                               className="px-4 py-2 bg-[#0bff7e] bg-opacity-20 text-[#0bff7e] rounded-xl text-sm font-medium"
                             >
                               Update Password
@@ -2264,10 +2425,11 @@ const DashboardPage: React.FC = () => {
                               className="relative w-14 h-7 flex-shrink-0"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={() => handleNotificationToggle('twoFactorEnabled')}
                             >
-                              <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#0bff7e] rounded-full transition-colors">
-                                <span className="absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-7"></span>
+                              <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.twoFactorEnabled} readOnly />
+                              <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.twoFactorEnabled ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                <span className={`absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.twoFactorEnabled ? 'translate-x-7' : 'translate-x-0'}`}></span>
                               </span>
                             </motion.div>
                           </div>
@@ -2339,10 +2501,11 @@ const DashboardPage: React.FC = () => {
                               className="relative w-14 h-7 flex-shrink-0"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={() => handleNotificationToggle('orderUpdates')}
                             >
-                              <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#0bff7e] rounded-full transition-colors">
-                                <span className="absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-7"></span>
+                              <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.orderUpdates} readOnly />
+                              <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.orderUpdates ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                <span className={`absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.orderUpdates ? 'translate-x-7' : 'translate-x-0'}`}></span>
                               </span>
                             </motion.div>
                           </div>
@@ -2357,10 +2520,11 @@ const DashboardPage: React.FC = () => {
                               className="relative w-14 h-7 flex-shrink-0"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={() => handleNotificationToggle('inventoryAlerts')}
                             >
-                              <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#0bff7e] rounded-full transition-colors">
-                                <span className="absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-7"></span>
+                              <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.inventoryAlerts} readOnly />
+                              <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.inventoryAlerts ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                <span className={`absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.inventoryAlerts ? 'translate-x-7' : 'translate-x-0'}`}></span>
                               </span>
                             </motion.div>
                           </div>
@@ -2375,10 +2539,11 @@ const DashboardPage: React.FC = () => {
                               className="relative w-14 h-7 flex-shrink-0"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={() => handleNotificationToggle('customerMessages')}
                             >
-                              <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#0bff7e] rounded-full transition-colors">
-                                <span className="absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-7"></span>
+                              <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.customerMessages} readOnly />
+                              <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.customerMessages ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                <span className={`absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.customerMessages ? 'translate-x-7' : 'translate-x-0'}`}></span>
                               </span>
                             </motion.div>
                           </div>
@@ -2393,10 +2558,11 @@ const DashboardPage: React.FC = () => {
                               className="relative w-14 h-7 flex-shrink-0"
                               whileHover={{ scale: 1.05 }}
                               whileTap={{ scale: 0.95 }}
+                              onClick={() => handleNotificationToggle('marketingPromotions')}
                             >
-                              <input type="checkbox" className="opacity-0 w-0 h-0" />
-                              <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#2a2a2a] rounded-full transition-colors">
-                                <span className="absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform"></span>
+                              <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.marketingPromotions} readOnly />
+                              <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.marketingPromotions ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                <span className={`absolute w-5 h-5 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.marketingPromotions ? 'translate-x-7' : 'translate-x-0'}`}></span>
                               </span>
                             </motion.div>
                           </div>
@@ -2418,10 +2584,11 @@ const DashboardPage: React.FC = () => {
                                 className="relative w-10 h-6 flex-shrink-0"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                onClick={() => handleNotificationToggle('emailNotifications')}
                               >
-                                <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                                <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#0bff7e] rounded-full transition-colors">
-                                  <span className="absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-4"></span>
+                                <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.emailNotifications} readOnly />
+                                <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.emailNotifications ? 'bg-[#0bff7e]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                  <span className={`absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.emailNotifications ? 'translate-x-4' : 'translate-x-0'}`}></span>
                                 </span>
                               </motion.div>
                             </div>
@@ -2439,10 +2606,11 @@ const DashboardPage: React.FC = () => {
                                 className="relative w-10 h-6 flex-shrink-0"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                onClick={() => handleNotificationToggle('pushNotifications')}
                               >
-                                <input type="checkbox" className="opacity-0 w-0 h-0" defaultChecked />
-                                <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#00b3ff] rounded-full transition-colors">
-                                  <span className="absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform translate-x-4"></span>
+                                <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.pushNotifications} readOnly />
+                                <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.pushNotifications ? 'bg-[#00b3ff]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                  <span className={`absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.pushNotifications ? 'translate-x-4' : 'translate-x-0'}`}></span>
                                 </span>
                               </motion.div>
                             </div>
@@ -2460,10 +2628,11 @@ const DashboardPage: React.FC = () => {
                                 className="relative w-10 h-6 flex-shrink-0"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                onClick={() => handleNotificationToggle('browserNotifications')}
                               >
-                                <input type="checkbox" className="opacity-0 w-0 h-0" />
-                                <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#2a2a2a] rounded-full transition-colors">
-                                  <span className="absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform"></span>
+                                <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.browserNotifications} readOnly />
+                                <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.browserNotifications ? 'bg-[#9d00ff]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                  <span className={`absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.browserNotifications ? 'translate-x-4' : 'translate-x-0'}`}></span>
                                 </span>
                               </motion.div>
                             </div>
@@ -2481,10 +2650,11 @@ const DashboardPage: React.FC = () => {
                                 className="relative w-10 h-6 flex-shrink-0"
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
+                                onClick={() => handleNotificationToggle('smsNotifications')}
                               >
-                                <input type="checkbox" className="opacity-0 w-0 h-0" />
-                                <span className="absolute cursor-pointer top-0 left-0 right-0 bottom-0 bg-[#2a2a2a] rounded-full transition-colors">
-                                  <span className="absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform"></span>
+                                <input type="checkbox" className="opacity-0 w-0 h-0" checked={notificationSettings.smsNotifications} readOnly />
+                                <span className={`absolute cursor-pointer top-0 left-0 right-0 bottom-0 ${notificationSettings.smsNotifications ? 'bg-[#ff6b9d]' : 'bg-[#2a2a2a]'} rounded-full transition-colors`}>
+                                  <span className={`absolute w-4 h-4 left-1 bottom-1 bg-white rounded-full transition-transform ${notificationSettings.smsNotifications ? 'translate-x-4' : 'translate-x-0'}`}></span>
                                 </span>
                               </motion.div>
                             </div>
