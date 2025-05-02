@@ -10,6 +10,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import PolicyPage from "./pages/PolicyPage";
 import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
+import DiscountsPage from "./pages/DiscountsPage";
 import ArticlePage from "./pages/ArticlePage";
 import AdminPage from "./pages/AdminPage";
 import Navbar from "./components/Navbar";
@@ -56,6 +57,7 @@ function App() {
               <Route path="/policy/:type" component={PolicyPage} />
               <Route path="/login" component={LoginPage} />
               <Route path="/dashboard" component={DashboardPage} />
+              <Route path="/discounts" component={DiscountsPage} />
               <Route path="/article/:id" component={ArticlePage} />
               <Route path="/admin" component={AdminPage} />
               <Route path="/:rest*" component={NotFoundPage} />
