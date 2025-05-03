@@ -47,7 +47,7 @@ const partners = [
   {
     id: 8,
     name: "Western Digital",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/Western_Digital_logo.svg/1024px-Western_Digital_logo.svg.png",
+    logo: "https://logos-world.net/wp-content/uploads/2023/01/Western-Digital-Logo.png",
     website: "https://www.westerndigital.com"
   }
 ];
@@ -116,15 +116,6 @@ const Partners: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-        
-        <div className="mt-12 text-center">
-          <p className="text-gray-400 mb-8">
-            We collaborate with industry-leading brands to deliver top-quality components for your builds.
-          </p>
-          <button className="bg-transparent border border-[#0bff7e] text-[#0bff7e] hover:bg-[#0bff7e] hover:text-black transition-colors duration-300 font-orbitron font-bold px-6 py-3 rounded-lg">
-            Become a Partner
-          </button>
         </div>
       </div>
     </section>

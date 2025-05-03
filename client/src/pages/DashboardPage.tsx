@@ -22,7 +22,8 @@ const DashboardPage: React.FC = () => {
   const [, setLocation] = useLocation();
   const [activeTab, setActiveTab] = useState('overview');
   const [userInfo, setUserInfo] = useState<any>(null);
-  const { products } = useProducts();
+  const { products, addProduct, updateProduct, deleteProduct } = useProducts();
+  const { showNotification } = useNotification();
   const [authorizedUsers, setAuthorizedUsers] = useState<User[]>([]);
   const [newUser, setNewUser] = useState<Partial<User>>({ name: '', email: '', role: 'editor', authorized: true });
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -128,28 +129,52 @@ const DashboardPage: React.FC = () => {
     // Get user info
     const user = localStorage.getItem('user');
     if (user) {
-      const parsedUser = JSON.parse(user);
-      setUserInfo(parsedUser);
-      
-      // Initialize profile settings with user data
-      setProfileSettings({
-        name: parsedUser.name || '',
-        email: parsedUser.email || '',
-        phone: parsedUser.phone || '',
-        jobTitle: parsedUser.jobTitle || '',
-        bio: parsedUser.bio || ''
-      });
-      
-      // Initialize notification settings if they exist
-      if (parsedUser.notificationSettings) {
-        setNotificationSettings(parsedUser.notificationSettings);
+      try {
+        const parsedUser = JSON.parse(user);
+        setUserInfo(parsedUser);
+        
+        // Initialize profile settings with user data
+        setProfileSettings({
+          name: parsedUser.name || '',
+          email: parsedUser.email || '',
+          phone: parsedUser.phone || '',
+          jobTitle: parsedUser.jobTitle || '',
+          bio: parsedUser.bio || ''
+        });
+        
+        // Initialize notification settings if they exist
+        if (parsedUser.notificationSettings) {
+          setNotificationSettings({
+            ...notificationSettings, // Default values as fallback
+            ...parsedUser.notificationSettings // Override with saved values
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing user data from localStorage:', error);
+        // Handle corrupted user data by removing it
+        localStorage.removeItem('user');
       }
     }
     
     // Load authorized users
     const storedUsers = localStorage.getItem('authorizedUsers');
     if (storedUsers) {
-      setAuthorizedUsers(JSON.parse(storedUsers));
+      try {
+        setAuthorizedUsers(JSON.parse(storedUsers));
+      } catch (error) {
+        console.error('Error parsing authorized users:', error);
+        // Initialize with owner as fallback
+        const initialUsers: User[] = [
+          {
+            name: 'Admin',
+            email: OWNER_EMAIL,
+            role: 'admin',
+            authorized: true
+          }
+        ];
+        setAuthorizedUsers(initialUsers);
+        localStorage.setItem('authorizedUsers', JSON.stringify(initialUsers));
+      }
     } else {
       // Initialize with owner
       const initialUsers: User[] = [
@@ -264,15 +289,27 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleAddProduct = (product: any) => {
-    // Add product logic
-    console.log('Add product:', product);
+    // Add product logic using the ProductContext
+    addProduct(product);
     setIsAddingProduct(false);
+    
+    // Show notification of success
+    showNotification(
+      `${product.name} has been added to the catalog.`,
+      "success"
+    );
   };
 
   const handleEditProduct = (product: any) => {
-    // Edit product logic
-    console.log('Edit product:', product);
+    // Edit product logic using the ProductContext
+    updateProduct(product);
     setIsEditingProduct(false);
+    
+    // Show notification of success
+    showNotification(
+      `${product.name} has been updated successfully.`,
+      "success"
+    );
   };
 
   const startEditingProduct = (product: Product) => {
@@ -282,8 +319,17 @@ const DashboardPage: React.FC = () => {
   };
 
   const handleDeleteProduct = (id: number) => {
-    // Delete product logic
-    console.log('Delete product:', id);
+    // Find the product name before deletion
+    const productToDelete = products.find(p => p.id === id);
+    
+    // Delete product logic using the ProductContext
+    deleteProduct(id);
+    
+    // Show notification of success
+    showNotification(
+      `${productToDelete?.name || 'Product'} has been removed from the catalog.`,
+      "success"
+    );
   };
 
   const filteredProducts = products.filter(product => 
@@ -339,6 +385,7 @@ const DashboardPage: React.FC = () => {
     
     // Update user info in localStorage
     if (userInfo) {
+      // Create updated user with all necessary fields
       const updatedUser = {
         ...userInfo,
         name: profileSettings.name,
@@ -346,11 +393,30 @@ const DashboardPage: React.FC = () => {
         phone: profileSettings.phone,
         jobTitle: profileSettings.jobTitle,
         bio: profileSettings.bio,
-        notificationSettings
+        notificationSettings: {
+          ...notificationSettings
+        }
       };
       
+      // Save to localStorage
       localStorage.setItem('user', JSON.stringify(updatedUser));
+      
+      // Update userInfo state immediately
       setUserInfo(updatedUser);
+      
+      // Add password change if provided
+      if (passwordSettings.newPassword && 
+          passwordSettings.newPassword === passwordSettings.confirmPassword) {
+        // In a real app, you would send the password change to a server
+        console.log('Password would be updated on server:', passwordSettings.newPassword);
+        
+        // Clear password fields
+        setPasswordSettings({
+          currentPassword: '',
+          newPassword: '',
+          confirmPassword: ''
+        });
+      }
     }
     
     // Show success message
@@ -362,6 +428,44 @@ const DashboardPage: React.FC = () => {
       setShowSuccessMessage(false);
     }, 3000);
   };
+
+  // Refresh user data when settings are saved
+  useEffect(() => {
+    if (settingsSaved) {
+      // Get latest user data from localStorage
+      const user = localStorage.getItem('user');
+      if (user) {
+        try {
+          const parsedUser = JSON.parse(user);
+          
+          // Refresh all settings from the saved data
+          setUserInfo(parsedUser);
+          
+          // Refresh profile settings
+          setProfileSettings({
+            name: parsedUser.name || '',
+            email: parsedUser.email || '',
+            phone: parsedUser.phone || '',
+            jobTitle: parsedUser.jobTitle || '',
+            bio: parsedUser.bio || ''
+          });
+          
+          // Refresh notification settings
+          if (parsedUser.notificationSettings) {
+            setNotificationSettings({
+              ...notificationSettings,
+              ...parsedUser.notificationSettings
+            });
+          }
+          
+          // Reset the flag
+          setSettingsSaved(false);
+        } catch (error) {
+          console.error('Error refreshing user data:', error);
+        }
+      }
+    }
+  }, [settingsSaved]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#121212] to-[#1c1c1c]">
@@ -1599,9 +1703,9 @@ const DashboardPage: React.FC = () => {
                           <button className="flex items-center px-3 py-1 bg-[#00b3ff] bg-opacity-20 text-[#00b3ff] rounded-lg text-sm">
                             <span className="w-2 h-2 rounded-full bg-[#00b3ff] mr-2"></span>
                             Traffic
-                              </button>
-                            </div>
-                      </div>
+                      </button>
+                    </div>
+                  </div>
                       
                       <div className="p-6 h-[350px]">
                         <div className="relative h-full">
@@ -1891,8 +1995,8 @@ const DashboardPage: React.FC = () => {
                         <h3 className="text-xl font-orbitron font-bold text-white">Top Products</h3>
                         <button className="text-[#0bff7e] text-sm font-medium hover:underline">
                           View All
-                        </button>
-                      </div>
+                  </button>
+                </div>
                       
                       <div className="p-4">
                         {products.slice(0, 5).map((product, index) => (
@@ -2011,51 +2115,6 @@ const DashboardPage: React.FC = () => {
                 </motion.div>
               )}
               
-              {/* Empty State for other tabs */}
-            {(activeTab === 'orders' || activeTab === 'customers') && (
-                <motion.div
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                  className="bg-[#1a1a1a] rounded-2xl shadow-lg border border-[#2a2a2a] p-12 text-center"
-                >
-                  <motion.div 
-                    variants={itemVariants}
-                    className="w-24 h-24 mx-auto flex items-center justify-center bg-[#2a2a2a] rounded-full text-gray-400 mb-6"
-                  >
-                  <i className={`fas ${
-                    activeTab === 'orders' ? 'fa-shopping-cart' :
-                    activeTab === 'customers' ? 'fa-users' :
-                    'fa-cogs'
-                  } text-4xl`}></i>
-                  </motion.div>
-                  
-                  <motion.h3 
-                    variants={itemVariants}
-                    className="text-2xl font-orbitron font-bold text-white mb-4"
-                  >
-                  {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Section
-                  </motion.h3>
-                  
-                  <motion.p 
-                    variants={itemVariants}
-                    className="text-gray-400 mb-8 max-w-lg mx-auto"
-                  >
-                    This section is currently under development. Our team is working hard to bring you amazing new features soon. Check back later for updates!
-                  </motion.p>
-                  
-                  <motion.button 
-                    variants={itemVariants}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  onClick={() => setActiveTab('overview')}
-                    className="px-6 py-3 bg-gradient-to-r from-[#0bff7e] to-[#00b3ff] text-black font-bold rounded-xl shadow-lg"
-                >
-                    <i className="fas fa-arrow-left mr-2"></i>
-                  Back to Overview
-                  </motion.button>
-                </motion.div>
-            )}
 
             {activeTab === 'customers' && (
                 <motion.div
@@ -2242,9 +2301,9 @@ const DashboardPage: React.FC = () => {
                       </div>
                     </div>
                     
-                    <div className="overflow-x-auto">
-                      <table className="w-full min-w-full">
-                        <thead>
+                <div className="overflow-x-auto">
+                  <table className="w-full min-w-full">
+                    <thead>
                           <tr className="border-b border-[#2a2a2a] bg-[#202020]">
                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Order ID</th>
                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Customer</th>
@@ -2253,9 +2312,9 @@ const DashboardPage: React.FC = () => {
                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Payment</th>
                             <th className="px-6 py-4 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
-                          </tr>
-                        </thead>
-                        <tbody>
+                      </tr>
+                    </thead>
+                    <tbody>
                           {[
                             { id: 'ORD-8423', customer: 'John Smith', email: 'john@example.com', date: '2023-08-12', amount: 459.99, status: 'Delivered', payment: 'Paid', paymentMethod: 'Credit Card' },
                             { id: 'ORD-8422', customer: 'Emma Johnson', email: 'emma@example.com', date: '2023-08-11', amount: 899.99, status: 'Processing', payment: 'Paid', paymentMethod: 'PayPal' },
@@ -2274,7 +2333,7 @@ const DashboardPage: React.FC = () => {
                                 <span className="font-medium text-[#00b3ff]">{order.id}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex items-center">
+                            <div className="flex items-center">
                                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#0bff7e] to-[#00b3ff] flex items-center justify-center text-black font-bold mr-2">
                                     {order.customer.charAt(0)}
                                   </div>
@@ -2282,8 +2341,8 @@ const DashboardPage: React.FC = () => {
                                     <div className="text-white">{order.customer}</div>
                                     <div className="text-gray-400 text-xs">{order.email}</div>
                                   </div>
-                                </div>
-                              </td>
+                            </div>
+                          </td>
                               <td className="px-6 py-4 whitespace-nowrap text-gray-300">
                                 {order.date}
                               </td>
@@ -2291,7 +2350,7 @@ const DashboardPage: React.FC = () => {
                                 <span className="text-white font-bold">${order.amount.toFixed(2)}</span>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
+                            <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
                                   order.status === 'Delivered' ? 'bg-green-900 bg-opacity-20 text-green-500' : 
                                   order.status === 'Processing' ? 'bg-yellow-900 bg-opacity-20 text-yellow-500' : 
                                   order.status === 'Shipped' ? 'bg-blue-900 bg-opacity-20 text-blue-500' : 
@@ -2299,8 +2358,8 @@ const DashboardPage: React.FC = () => {
                                   'bg-red-900 bg-opacity-20 text-red-500'
                                 }`}>
                                   {order.status}
-                                </span>
-                              </td>
+                            </span>
+                          </td>
                               <td className="px-6 py-4 whitespace-nowrap">
                                 <div>
                                   <span className={`inline-flex px-2 py-1 text-xs rounded-full ${
@@ -2314,7 +2373,7 @@ const DashboardPage: React.FC = () => {
                                 </div>
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
-                                <div className="flex space-x-2">
+                            <div className="flex space-x-2">
                                   <motion.button 
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
@@ -2327,27 +2386,27 @@ const DashboardPage: React.FC = () => {
                                     whileTap={{ scale: 0.9 }}
                                     className="p-2 text-[#0bff7e] hover:bg-[#0bff7e] hover:bg-opacity-10 rounded-lg transition-colors"
                                   >
-                                    <i className="fas fa-edit"></i>
+                                <i className="fas fa-edit"></i>
                                   </motion.button>
                                   <motion.button 
                                     whileHover={{ scale: 1.1 }}
                                     whileTap={{ scale: 0.9 }}
                                     className="p-2 text-red-500 hover:bg-red-500 hover:bg-opacity-10 rounded-lg transition-colors"
                                   >
-                                    <i className="fas fa-trash-alt"></i>
+                                <i className="fas fa-trash-alt"></i>
                                   </motion.button>
-                                </div>
-                              </td>
+                            </div>
+                          </td>
                             </motion.tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
                     
                     <div className="p-6 flex justify-between items-center border-t border-[#2a2a2a]">
                       <div className="text-gray-400 text-sm">
                         Showing <span className="text-white">7</span> of <span className="text-white">157</span> orders
-                      </div>
+              </div>
                       <div className="flex space-x-1">
                         <motion.button 
                           whileHover={{ scale: 1.05 }}
@@ -2538,7 +2597,7 @@ const DashboardPage: React.FC = () => {
                     <i className="fas fa-save mr-2"></i>
                     Save Changes
                   </motion.button>
-              </div>
+                </div>
                 
                 {/* Show success message if settings were saved */}
                 {showSuccessMessage && (
@@ -2563,7 +2622,7 @@ const DashboardPage: React.FC = () => {
                     >
                       <div className="p-6 border-b border-[#2a2a2a]">
                         <h3 className="text-xl font-orbitron font-bold text-white">Settings Menu</h3>
-          </div>
+              </div>
                       
                       <div className="p-3 space-y-1">
                         <motion.button 
@@ -2836,9 +2895,9 @@ const DashboardPage: React.FC = () => {
                                 />
                                 {formErrors.newPassword && (
                                   <p className="text-red-500 text-xs mt-1">{formErrors.newPassword}</p>
-                                )}
-                              </div>
-                            </div>
+            )}
+          </div>
+        </div>
                             
                             <div>
                               <label className="block text-gray-400 mb-2 text-sm">Confirm Password</label>

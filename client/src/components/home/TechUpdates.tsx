@@ -40,53 +40,87 @@ const techNews = [
 const TechUpdates: React.FC = () => {
   const [news, setNews] = useState(techNews);
   const [, setLocation] = useLocation();
+  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   
   const handleReadMore = (articleId: number) => {
     setLocation(`/article/${articleId}`);
   };
 
+  const handleViewAll = () => {
+    setLocation('/articles');
+  };
+
   return (
-    <section id="tech-updates" className="py-16 bg-[#121212]">
+    <section id="tech-updates" className="py-20 bg-gradient-to-b from-[#121212] to-[#1a1a1a]">
       <div className="container mx-auto px-4">
-        <h2 className="text-3xl font-orbitron font-bold text-white mb-12 text-center">
-          Tech <span className="text-[#ff6b9d]">Updates</span>
-        </h2>
+        <div className="flex justify-between items-center mb-12">
+          <h2 
+            className="text-4xl font-orbitron font-bold text-white relative"
+            data-aos="fade-right"
+            data-aos-duration="800"
+          >
+            Tech <span className="text-[#00e5ff]">Updates</span>
+            <div className="h-1 w-20 bg-[#00e5ff] mt-2 rounded-full"></div>
+          </h2>
+          
+          <button 
+            onClick={handleViewAll}
+            className="px-6 py-3 bg-transparent border border-[#00e5ff] text-[#00e5ff] font-medium rounded-lg hover:bg-[#00e5ff] hover:text-black transition-all duration-300 flex items-center group relative overflow-hidden"
+            data-aos="fade-left"
+            data-aos-duration="800"
+          >
+            <span className="relative z-10">View All Updates</span>
+            <div className="absolute inset-0 bg-[#00e5ff] transform -translate-x-full group-hover:translate-x-0 transition-transform duration-300"></div>
+            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300 relative z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
+            </svg>
+          </button>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {news.map((article, index) => (
             <div 
               key={article.id} 
-              className="bg-[#1e1e1e] rounded-lg overflow-hidden cyberpunk-border transition-all duration-300 hover:transform hover:-translate-y-2"
+              className="bg-[#1e1e1e] rounded-xl overflow-hidden shadow-[0_0_15px_rgba(0,229,255,0.15)] transition-all duration-500 hover:shadow-[0_0_25px_rgba(0,229,255,0.3)] transform hover:-translate-y-2"
+              data-aos="fade-up"
+              data-aos-delay={index * 100}
+              data-aos-duration="800"
+              onMouseEnter={() => setHoveredCard(article.id)}
+              onMouseLeave={() => setHoveredCard(null)}
             >
-              <div className="h-48 overflow-hidden">
+              <div className="h-52 overflow-hidden relative">
                 <img 
                   src={article.image}
                   alt={article.title} 
-                  className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+                  className={`w-full h-full object-cover transition-transform duration-700 ${hoveredCard === article.id ? 'scale-110' : 'scale-100'}`}
                 />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#1e1e1e] to-transparent opacity-60"></div>
+                <span className="absolute top-4 left-4 text-xs px-3 py-1.5 bg-[#00e5ff] text-black font-bold rounded-full">
+                  {article.category}
+                </span>
               </div>
               
               <div className="p-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xs px-2 py-1 bg-[#ff6b9d] text-black font-bold rounded-full">
-                    {article.category}
-                  </span>
-                  <span className="text-xs text-gray-400">{article.date}</span>
+                <div className="flex justify-end mb-3">
+                  <span className="text-xs text-gray-400 font-medium">{article.date}</span>
                 </div>
                 
-                <h3 className="text-xl font-orbitron font-bold text-white mb-3 line-clamp-2">
+                <h3 className="text-xl font-orbitron font-bold text-white mb-3 line-clamp-2 min-h-[3.5rem]">
                   {article.title}
                 </h3>
                 
-                <p className="text-gray-400 text-sm mb-4 line-clamp-3">
+                <p className="text-gray-400 text-sm mb-5 line-clamp-3 min-h-[4.5rem]">
                   {article.summary}
                 </p>
                 
                 <button 
                   onClick={() => handleReadMore(article.id)}
-                  className="text-[#ff6b9d] text-sm font-medium flex items-center hover:underline cursor-pointer"
+                  className="w-full py-3 px-4 bg-[#232323] rounded-lg text-[#00e5ff] font-medium flex items-center justify-center group hover:bg-[#00e5ff] hover:text-black transition-all duration-300"
                 >
-                  Read More <i className="fas fa-arrow-right ml-2 text-xs"></i>
+                  <span>Read Article</span>
+                  <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                  </svg>
                 </button>
               </div>
             </div>

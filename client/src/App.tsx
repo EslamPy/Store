@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage";
 import DashboardPage from "./pages/DashboardPage";
 import DiscountsPage from "./pages/DiscountsPage";
 import ArticlePage from "./pages/ArticlePage";
+import ArticlesPage from "./pages/ArticlesPage";
 import AdminPage from "./pages/AdminPage";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -59,6 +60,7 @@ function App() {
               <Route path="/dashboard" component={DashboardPage} />
               <Route path="/discounts" component={DiscountsPage} />
               <Route path="/article/:id" component={ArticlePage} />
+              <Route path="/articles" component={ArticlesPage} />
               <Route path="/admin" component={() => {
                 window.location.href = "/dashboard?tab=products";
                 return null;

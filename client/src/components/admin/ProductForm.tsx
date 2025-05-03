@@ -14,6 +14,7 @@ const emptyProduct: Product = {
   description: '',
   fullDescription: '',
   category: '',
+  brand: '',
   price: 0,
   originalPrice: undefined,
   rating: 0,
@@ -101,6 +102,7 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
     if (!formData.name) newErrors.name = 'Name is required';
     if (!formData.description) newErrors.description = 'Description is required';
     if (!formData.category) newErrors.category = 'Category is required';
+    if (!formData.brand) newErrors.brand = 'Brand is required';
     if (formData.price <= 0) newErrors.price = 'Price must be greater than 0';
     if (!formData.image) newErrors.image = 'Image URL is required';
     if (!formData.sku) newErrors.sku = 'SKU is required';
@@ -180,6 +182,19 @@ const ProductForm: React.FC<ProductFormProps> = ({ product, onSubmit, onCancel }
               ))}
             </select>
             {errors.category && <p className="text-red-500 text-sm mt-1">{errors.category}</p>}
+          </div>
+          
+          {/* Brand */}
+          <div>
+            <label className="block text-gray-300 mb-1">Brand *</label>
+            <input
+              type="text"
+              name="brand"
+              value={formData.brand}
+              onChange={handleInputChange}
+              className={`w-full bg-[#2d2d2d] text-white border rounded-lg px-4 py-2 outline-none ${errors.brand ? 'border-red-500' : 'border-[#3d3d3d] focus:border-[#0bff7e]'}`}
+            />
+            {errors.brand && <p className="text-red-500 text-sm mt-1">{errors.brand}</p>}
           </div>
           
           {/* Description */}
