@@ -5,6 +5,7 @@ import { useWishlist } from '../hooks/useWishlist';
 import SearchResults from './SearchResults';
 import { searchProducts } from '../data/products';
 import CurrencySelector from './ui/CurrencySelector';
+import logo from '../assets/logo.png';
 
 const Navbar: React.FC = () => {
   const [location, setLocation] = useLocation();
@@ -92,7 +93,7 @@ const Navbar: React.FC = () => {
             {/* Logo */}
             <Link href="/">
               <div className="flex items-center space-x-2 cursor-pointer">
-                <img src="../src/assets/logo.png" alt="MedTech Logo" className="h-10" />
+                <img src={logo} alt="MedTech Logo" className="h-10" />
                 <span className="text-white text-xl font-orbitron font-bold">MedTech</span>
               </div>
             </Link>

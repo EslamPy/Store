@@ -1,4 +1,5 @@
 import { Link } from 'wouter';
+import logo from '../assets/logo.png';
 
 const Footer: React.FC = () => {
   return (
@@ -6,7 +7,7 @@ const Footer: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
           <div>
-            <img src="../src/assets/logo.png" alt="MedTech Logo" className="h-10 mb-6" />
+            <img src={logo} alt="MedTech Logo" className="h-10 mb-6" />
             <p className="text-gray-400 mb-6">
               Premium PC components for gamers, creators, and tech enthusiasts.
             </p>
